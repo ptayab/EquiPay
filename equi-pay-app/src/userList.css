@@ -1,0 +1,45 @@
+/* UserList.css */
+
+/* Style for the User List container */
+div {
+    text-align: center;
+    background-color: #f0f0f0; /* Background color for the container */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Box shadow for a subtle depth effect */
+  }
+  
+  /* Style for the header */
+  h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333; /* Text color for the header */
+  }
+  
+  /* Style for the list of users */
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  /* Style for each user item */
+  li {
+    margin: 10px 0;
+  }
+  
+  /* Style for the user item link */
+  a {
+    text-decoration: none;
+    font-size: 18px;
+    color: #007bff; /* Text color for the links */
+    display: inline-block;
+    transition: color 0.3s ease; /* Smooth color transition on hover */
+  }
+  
+  /* Hover effect for user item link */
+  a:hover {
+    color: #0056b3; /* Text color on hover */
+  }
+  
+  /* You can add more styles as needed */
+  
