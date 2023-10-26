@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import './userList.css'
+import '../styles/userList.css'
 
 function UserList() {
   const sampleUsers = [
