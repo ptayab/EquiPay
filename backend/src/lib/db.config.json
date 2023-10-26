@@ -63,7 +63,25 @@
                     "type": "TEXT"                    
                 }
             ]
-        }
+    } , {
+        "name": "log",
+        "columns": [
+            {
+                "name": "id",
+                "type": "INTEGER",
+                "attributes": ["PRIMARY KEY", "AUTOINCREMENT"]
+            } , {
+                "name": "type",
+                "type": "TEXT"
+            } , {
+                "name": "value",
+                "type": "TEXT"                    
+            } , {
+                "name": "date",
+                "type": "TEXT"                    
+            }
+        ]
+    }
     ],
     "users": [
         {

@@ -1,7 +1,7 @@
 import express from "express";
 import appconfig from "./lib/express.js";
 
-const port = process.env.PORT || 80;
+const port = process.env.PORT || 4000;
 
 async function startServer() {
     const app = express();
