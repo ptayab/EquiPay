@@ -7,9 +7,12 @@ import UserList from './UserList';
 import UserProfile from './UserProfile'; // Create this component
 import GroupExpenses from "./group_expenses.jsx";
 import { useState } from "react";
-
+import { TestGet } from "../lib/get.js";
 function App() {
-  const apiUrl = "http://localhost:3001";
+  let b=TestGet();
+
+
+
 
   // Use this as global group
   let [group, setGroup] = useState({
@@ -49,7 +52,7 @@ function App() {
           <Route path="/register" element={<Register/>} />
           {/* Add more routes for user profiles, expense forms, etc. */}
         </Routes>
-        <GroupExpenses group={group} ></GroupExpenses>
+        <>b</>
       </div>
         
     </Router>
