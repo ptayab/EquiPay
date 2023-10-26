@@ -5,10 +5,29 @@ import Login from './login';
 import Register from './register';
 import UserList from './UserList';
 import UserProfile from './UserProfile'; // Create this component
+import GroupExpenses from "./group_expenses.jsx";
+import { useState } from "react";
 
 function App() {
+  const apiUrl = "http://localhost:3001";
+
+  // Use this as global group
+  let [group, setGroup] = useState({
+    name: "Expenses",
+    balance: 0,
+    users: [],
+    activeUser: "",
+    expenses: [],
+    usersMinusActive: {
+      users: [],
+      outstandingBalance: 0,
+    },
+  });
+
+
   return (
     <Router>
+      <h1 className="title">Equipay</h1>
       <div className="App">
         <nav>
           <ul>
@@ -30,9 +49,10 @@ function App() {
           <Route path="/register" element={<Register/>} />
           {/* Add more routes for user profiles, expense forms, etc. */}
         </Routes>
+        <GroupExpenses group={group} ></GroupExpenses>
       </div>
+        
     </Router>
   );
-}
-
+  }
 export default App;
