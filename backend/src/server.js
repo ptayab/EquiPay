@@ -1,14 +1,14 @@
 import express from "express";
 import appconfig from "./lib/express.js";
 
-const port = 3001;
+const port = process.env.PORT || 80;
 
 async function startServer() {
     const app = express();
-    await appconfig({ app });
+    appconfig({ app });
   
     app && app.listen(port, () => {
-        console.log("Server Online on port:",port)
+        console.log(`Starting Server....  `);
         console.log(`--------------------------  `);
         console.log(`     /\\ `);
         console.log(`    ( /   @ @    () `);
@@ -19,6 +19,7 @@ async function startServer() {
         console.log(`     /  /-----\\ \ `);
         console.log(`       /       \\ `);
         console.log(`--------------------------  `);
+        console.log(`Accessible at http://localhost:${port}`)
     });
 }
 
