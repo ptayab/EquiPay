@@ -4,7 +4,6 @@ import cors from "cors";
 import methodOverride from "method-override";
 import routes from "../api/router.js";
 
-
 const AppRouter = ({ app }) => {
   /**
    * API Status Check !!
