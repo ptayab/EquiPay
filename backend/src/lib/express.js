@@ -2,17 +2,13 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import methodOverride from "method-override";
-import routes from "../api/index.js";
-import { fileURLToPath } from 'url';
-import path from 'path';
-import { dirname } from 'path';
-const pubPath = path.join(dirname(dirname(fileURLToPath(import.meta.url))), "public");
+import routes from "../api/router.js";
 
-export default ({ app }) => {
+const AppRouter = ({ app }) => {
   /**
    * API Status Check !!
    */
-  app.get("/status", (req, res) => {
+  app.get("/status", (_req, res) => {
     res.status(200).json({ status: "Server is online, and API is responding" });
   });
   app.head("/status", (req, res) => { res.status(200).end(); });
@@ -57,3 +53,5 @@ export default ({ app }) => {
     }
   );
 };
+
+export default AppRouter;

@@ -1,14 +1,34 @@
-import { Router } from "express";
+
 // import { Container } from "typedi";
 // import AuthService from "../../services/auth";
 // import { IUserInput } from "../../interfaces/IUser";
 // import middlewares from "../middlewares";
 // import { celebrate, Joi } from "celebrate";
 
+
+import { Router } from "express";
+
 const route = Router();
 
 export default (app) => {
-  app.use("/auth", route);
+  app.use("/test", route);
+
+  route.get("/", async (req, res) => {
+        res.json({Message: "You have made a sucessfull GET request"});
+  });
+  route.post("/", async (req, res) => {
+    const response =  {
+      message: "You have made a sucessful POST request",
+      ...req.body
+    }
+
+    res.json(req);
+});
+};
+
+
+// export default (app) => {
+//   app.use("/auth", route);
   // const prisma = new PrismaClient();
   // const sampleServiceInstance = Container.get(AuthService);
 
@@ -88,4 +108,4 @@ export default (app) => {
   // //       return next(e);
   // //     }
   // //   });
-};
+// };
