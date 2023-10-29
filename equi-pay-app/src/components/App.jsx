@@ -5,7 +5,7 @@ import Register from './register';
 import UserList from './UserList';
 import UserProfile from './UserProfile'; // Create this component
 import Header from "./common/Header";
-import Home from "./home";
+import Home from "./home/home";
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 function App() {
