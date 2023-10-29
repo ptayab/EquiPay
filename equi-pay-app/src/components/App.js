@@ -7,9 +7,9 @@ import UserList from './UserList';
 import UserProfile from './UserProfile'; // Create this component
 import GroupExpenses from "./group_expenses.jsx";
 import { useState } from "react";
-import { TestGet } from "../lib/get.js";
+
 function App() {
-  let b=TestGet();
+
 
 
 
