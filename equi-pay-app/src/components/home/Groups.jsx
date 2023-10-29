@@ -6,9 +6,9 @@ import CreateGroupDialog from "./CreateGroup";
 import JoinGroup from "./JoinGroup";
 function Groups() {
     const joinedGroups = [
-        { name: 'Travel 1', members: 12 },
-        { name: 'Party 1', members: 18 },
-        { name: 'Roommate 2', members: 6 },
+        { name: 'Travel', members: 12 },
+        { name: 'Party', members: 18 },
+        { name: 'Roommate', members: 6 },
     ];
 
     return (

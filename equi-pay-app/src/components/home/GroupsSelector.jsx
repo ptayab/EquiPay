@@ -17,7 +17,7 @@ const friends = [
 const groups = [
     {
         id: 1,
-        name: 'Group-1',
+        name: 'Travel',
         users: [
             {
                 id: 3,
@@ -31,7 +31,7 @@ const groups = [
     },
     {
         id: 2,
-        name: 'Group027',
+        name: 'Party',
         users: [
             {
                 id: 5,
