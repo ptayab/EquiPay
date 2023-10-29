@@ -4,9 +4,9 @@ import {IconButton} from "@mui/material";
 import CreateExpense from "./CreateExpense";
 function NeedToPayFees() {
     const feesToPay = [
-        { title: 'Electric Bill', dueDate: '2023-11-15', amount: 50 },
-        { title: 'Rent', dueDate: '2023-11-30', amount: 800 },
-        { title: 'Internet Subscription', dueDate: '2023-11-25', amount: 60 },
+        { title: 'Electric Bill', Date: '2023-11-15', amount: 50 },
+        { title: 'Rent', Date: '2023-11-30', amount: 800 },
+        { title: 'Internet Subscription', Date: '2023-11-25', amount: 60 },
     ];
 
     return (
@@ -22,7 +22,7 @@ function NeedToPayFees() {
                     <li key={index} className="flex items-center p-4 rounded-md border border-gray-200">
                         <div className="w-1/2">
                             <h2 className="text-lg font-semibold">{fee.title}</h2>
-                            <p className="text-gray-600">Due Date: {fee.dueDate}</p>
+                            <p className="text-gray-600">Date: {fee.Date}</p>
                         </div>
                         <div className="w-1/2 text-right">
                             <p className="text-lg font-semibold">${fee.amount}</p>

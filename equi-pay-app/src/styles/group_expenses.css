@@ -17,11 +17,6 @@
   max-height: 0em;
 }
 
-
-
-
-
-
 .button-container {
   display: flex;
   justify-content: space-evenly;
@@ -61,11 +56,9 @@
 }
 
 
-
 span {
   margin: 5px;
 }
-
 
 
 .group-name {
