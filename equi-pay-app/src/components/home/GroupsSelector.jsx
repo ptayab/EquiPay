@@ -6,11 +6,11 @@ import UsersSelector from "./UsersSelector";
 const friends = [
     {
         id: 1,
-        name: 'Jack'
+        name: 'Randy'
     },
     {
         id: 2,
-        name: 'Jerry'
+        name: 'Corey'
     }
 ];
 
@@ -18,26 +18,26 @@ const groups = [
     {
         id: 1,
 
-        name: 'Group-1',
+        name: 'Party',
         users: [
             {
                 id: 3,
-                name: 'Tom'
+                name: 'Bob'
             },
             {
                 id: 4,
-                name: 'Rose'
+                name: 'Vince'
 
             }
         ]
     },
     {
         id: 2,
-        name: 'Group027',
+        name: 'Hotel',
         users: [
             {
                 id: 5,
-                name: 'Bob'
+                name: 'Steezy'
             }
         ]
     }

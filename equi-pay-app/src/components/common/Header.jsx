@@ -1,7 +1,6 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, Button, IconButton, Menu, MenuItem, Link } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-
 function Header() {
     const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -35,7 +34,7 @@ function Header() {
                     <MenuItem onClick={handleMenuClose}>Contact</MenuItem>
                 </Menu>
                 <Typography variant="h6" style={{ flexGrow: 1 }}>
-                    Your Website
+                    Equipay
                 </Typography>
                 <Link href="#" color="inherit">Home</Link>
                 <Link href="#" color="inherit">About</Link>
