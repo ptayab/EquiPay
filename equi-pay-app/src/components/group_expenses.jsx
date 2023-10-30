@@ -1,7 +1,7 @@
 import React, { useState, createRef } from "react";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
-import "../styles/group_expenses.css";
-import Expense from "./expense";
+
+
 import AddExpense from "./add_expense";
 
 
