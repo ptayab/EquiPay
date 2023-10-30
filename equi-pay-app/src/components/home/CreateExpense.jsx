@@ -5,7 +5,6 @@ import ReceiptIcon from '@mui/icons-material/Receipt';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import {DatePicker} from "@mui/x-date-pickers";
 import PayerSelector from "./PayerSelector";
-import Button from '@mui/material/Button';
 function CreateExpense() {
     const [open, setOpen] = useState(false);
     return (
@@ -71,7 +70,6 @@ function CreateExpense() {
                     <div className={'mt-5'}>
                         <PayerSelector />
                     </div>
-                        <Button variant="contained">Conform</Button>
                 </DialogContent>
             </Dialog>
 
