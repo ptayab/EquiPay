@@ -19,7 +19,6 @@ class DatabaseClass {
             console.log(`Building new one just for you. Don't loose this one too.`)
             console.log(dbpath)
             this.createTablesFromJSON(DBtables);
-           
         }
     }
 
@@ -98,8 +97,6 @@ class DatabaseClass {
             return [];
         } 
     }
-
-    
     /**
      * 
      * @param {string} table 
