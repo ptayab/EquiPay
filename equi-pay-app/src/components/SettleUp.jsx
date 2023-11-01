@@ -10,7 +10,6 @@ function SettleUp() {
       if (isNaN(parsedAmount)) {
         setPaymentResult('Please enter a valid amount.');
       } else {
-        // You can add your payment processing logic here
         setPaymentResult(`Payment of $${parsedAmount.toFixed(2)} has been processed successfully.`);
       }
     };
