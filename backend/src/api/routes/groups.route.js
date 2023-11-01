@@ -34,7 +34,20 @@ export default (app) => {
     // GET request to retrieve all groups
     route.get("/all", async (req, res) => {
         try {
-            const groupList = await GroupDatabase.getGroupList();
+            const groupList = await GroupDatabase.getGroupList();{joinedGroups.map((group, index) => (
+    <li key={index} className="flex items-center p-4 rounded-lg shadow-md bg-white">
+        <div className="rounded-full h-8 w-8 bg-blue-500 text-white flex items-center justify-center mr-4">
+            {group && group.name ? group.name : 'No Name Available'}
+        </div>
+        <div>
+            <h2 className="text-lg font-semibold">
+                {group && group.name ? group.name : 'No Name Available'}
+            </h2>
+            {/* You can include other information here if available */}
+        </div>
+    </li>
+))}
+
             res.json({ data: groupList });
         } catch (error) {
             res.status(500).json({ message: "Failed to retrieve group list", error: error.message });
