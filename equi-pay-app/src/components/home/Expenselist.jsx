@@ -36,9 +36,10 @@
 
 // export default NeedToPayFees;
 
+import { Link } from 'react-router-dom';
 import React, { useState } from 'react';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
-import { IconButton, TextField, Dialog, DialogContent, DialogTitle } from "@mui/material";
+import { IconButton, TextField, Dialog, DialogContent, DialogTitle, Button, InputAdornment } from "@mui/material";
 import CreateExpense from "./CreateExpense";
 
 function NeedToPayFees() {
@@ -51,6 +52,32 @@ function NeedToPayFees() {
   // Function to add a new expense to the list
   const addExpense = (newExpense) => {
     setFeesToPay([...feesToPay, newExpense]);
+  };
+
+  const [open, setOpen] = useState(false);
+  const [selectedExpenseIndex, setSelectedExpenseIndex] = useState(null);
+
+  const handleOpenDialog = (index) => {
+    setSelectedExpenseIndex(index);
+    setOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpen(false);
+  };
+
+  const settleUp = (index) => {
+    // Create a copy of the feesToPay array
+    const updatedFeesToPay = [...feesToPay];
+
+    // Remove the expense at the specified index
+    updatedFeesToPay.splice(index, 1);
+
+    // Update the state to reflect the changes
+    setFeesToPay(updatedFeesToPay);
+
+    // Close the dialog
+    handleCloseDialog();
   };
 
   return (
@@ -71,9 +98,41 @@ function NeedToPayFees() {
             <div className="w-1/2 text-right">
               <p className="text-lg font-semibold">${fee.amount}</p>
             </div>
+            <div className="w-1/2 text-right">
+              <Button variant="contained" onClick={() => handleOpenDialog(index)}>
+                Settle Up
+              </Button>
+            </div>
           </li>
         ))}
       </ul>
+
+      <Dialog onClose={handleCloseDialog} open={open} fullWidth>
+        <DialogTitle>Settle Up Expense</DialogTitle>
+        <DialogContent>
+          <div style={{ textAlign: 'center' }}>
+            <h1>Payment Page</h1>
+            <TextField
+              label="Enter the amount to pay"
+              type="number"
+              fullWidth
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">$</InputAdornment>
+                ),
+              }}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => settleUp(selectedExpenseIndex)}
+              style={{ marginTop: '10px' }}
+            >
+              Pay
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
