@@ -2,6 +2,7 @@ import {Container, Grid, Paper} from "@mui/material";
 import Groups from "./home/Groups";
 import Friends from "./home/Friends";
 import NeedToPayFees from "./home/NeedPayList";
+import UserList from "./UserList";
 
 
 function Home() {

@@ -183,12 +183,48 @@ class UserDBClass extends DatabaseClass {
             console.log(`getUserList: Table "User" issue. Unable to gather data: ${JSON.stringify(obj)}`, err);
         }
     }
-  
+}
+
+// Create a GroupDatabase
+class GroupDBClass extends DatabaseClass {
+    // Add methods here
+
+    createGroupTable() {
+        // Define the structure of the "groups" table
+        const tableInfo = {
+            tables: [
+                        {
+                            name: 'groups',
+                            columns: [
+                                { name: 'id', type: 'INTEGER', attributes: ['PRIMARY KEY'] },
+                                { name: 'name', type: 'TEXT', attributes: ['NOT NULL'] },
+                                { name: 'members', type: 'INTEGER'}
+                            ],
+                        },
+                    ],
+                    users: [], // If you don't need to insert any users, you can keep it as an empty array.
+                // Add more columns as needed
+        };
+
+        // Call the createTablesFromJSON method to create the "groups" table
+        this.createTablesFromJSON({ tables: [tableInfo] });
+    }
+
+    async getGroupList(){
+        try {
+            const dataPromise = super.getTable("groups");
+            const data = await dataPromise;
+            return data;
+        } catch (error) {
+            console.log(`getGroupList: Table "Group" issue. Unable to gather data: ${JSON.stringify(obj)}`, err);
+        }
+    }
 }
 
 
 export const Database = new DatabaseClass(dbpath);
 export const UserDatabase = new UserDBClass(dbpath);
+export const GroupDatabase = new GroupDBClass(dbpath);
 
 
 export default Database;

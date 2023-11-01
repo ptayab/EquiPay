@@ -11,6 +11,7 @@ function Friends() {
         { name: 'Friend 2', needPay: 8 },
         { name: 'Friend 3', needPay: 17 },
     ];
+    
 
     return (
         <div className="container mx-auto mt-5">
