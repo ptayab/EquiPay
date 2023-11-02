@@ -90,16 +90,24 @@ class DatabaseClass {
             const values = Object.values(obj);
 
             const conditions = fields.map((field, index) => {
-                if (values[index].includes('*')) {
+                if (typeof values[index] === 'string' && values[index].includes('*')) {
                     return `${field} LIKE ?`;
                 } else {
                     return `${field} = ?`;
                 }
             });
+              
+              // Create a new array with the values replaced (if needed)
+            const sanitizedValues = values.map(value => {
+            if (typeof value === 'string') {
+                return value.replace(/\*/g, '%');
+            }
+                return value;
+            });
+              
             const sql = `SELECT * FROM ${table} WHERE ${conditions.join(' AND ')}`;
-             // Replace '*' with '%' for SQL wildcard in values
-            values.forEach((value, index) => { values[index] = value.replace(/\*/g, '%') });
-            const entries = db.prepare(sql).all(values);
+            
+            const entries = db.prepare(sql).all(sanitizedValues);
             db.close();
             return entries ? entries : false;
         } catch (error) {
@@ -107,6 +115,8 @@ class DatabaseClass {
             return [];
         } 
     }
+
+
     /**
      * 
      * @param {string} table 
@@ -200,7 +210,6 @@ class UserDBClass extends DatabaseClass {
         }
     }
 
-
     async getUserList(){
         try {
             const dataPromise = super.getTable("users");
@@ -214,11 +223,39 @@ class UserDBClass extends DatabaseClass {
 }
 
 class EventDBClass extends DatabaseClass {
+    async _calculateEventBalanceForUser(eventID, userID){
+        try {
+            
+            const recordData = await super.getEntries("records",{ event: eventID});
+            let totalBalance = 0;
+            
+            recordData.forEach((record) => {
+                if (record.payer.toString() === userID) {
+
+                    totalBalance -= record.value; // Subtract for negative values
+
+                } else if (record.payee.toString() === userID) {
+       
+                    totalBalance += record.value; // Add for positive values
+                }
+            });
+               
+            return  totalBalance ;
+        } catch (error) {
+            console.log(`_calculateEventBalance: Table "Records" issue. Unable to gather data: ${eventID}`, error);
+        }
+    }
+
+
     async getEventById(id){
         try {
-            const dataPromise = super.getEntry("events",{ id: id});
-            const data = await dataPromise;
-            return data;
+            const eventData = await super.getEntry("events",{ id: id});
+            prepareEvent = {
+                ...eventData,
+                members: eventData.members.split(','),
+                date: eventData.date.toString(),
+            }
+            return prepareEvent;
         } catch (error) {
             console.log(`getUserById: Table "User" issue. Unable to gather data: ${JSON.stringify(obj)}`, err);
         }
@@ -226,12 +263,18 @@ class EventDBClass extends DatabaseClass {
 
     async getEventsByUserID(id){
         try {
-            console.log("DEBUG:",id)
-            const dataPromise = super.getEntries('events',{members: `*${id}*`});
-          
-            const data = await dataPromise;
-            console.log("DEBUG:",data)
-            return data;
+            const eventArray = await super.getEntries('events',{members: `*${id}*`});
+            const prepareEvents =  Promise.all(eventArray.map(async (eventItem)=> {
+                const balance = await this._calculateEventBalanceForUser(eventItem.id, id)
+                console.log("DEBUG:", balance) 
+                return {
+                    ...eventItem,
+                    members: eventItem.members.split(','),
+                    date: eventItem.date.toString(),
+                    balance: balance
+                }
+            }));
+            return await prepareEvents;
         } catch (error) {
             console.log(`getUserList: Table "User" issue. Unable to gather data: ${JSON.stringify(obj)}`, err);
         }
@@ -245,11 +288,13 @@ class EventDBClass extends DatabaseClass {
                 day: "2-digit",
                 hour: "2-digit",
                 minute: "2-digit",
-            });
-            const membersList = (Array.isArray(eventObj.members) ? 
+            }).toString();
+
+            let membersList = (Array.isArray(eventObj.members) ? 
                                 eventObj.members.map((member)=> { return member.id }).join(',') : 
-                                eventObj.members.id)
-            membersList += `,${eventObj.owner}`
+                                eventObj.members.id); membersList += `,${eventObj.owner}`
+
+            console.log("DEBUG:",membersList)
             const preparedEvent = {
                 ...eventObj,
                 owner: eventObj.owner.toString(),
@@ -257,7 +302,7 @@ class EventDBClass extends DatabaseClass {
                 active: 1,
                 members: membersList,
             }
-
+           
             await super.insertEntry('events', preparedEvent);
             const writtenEvent = await super.getEntries('events', preparedEvent);
             if(Array.isArray(eventObj.members)){
@@ -280,7 +325,6 @@ class EventDBClass extends DatabaseClass {
                 }
                 this.createNewRecord(newRecord)
             }
-
             return writtenEvent[writtenEvent.length - 1].id;
 
         } catch (error) {
@@ -296,7 +340,7 @@ class EventDBClass extends DatabaseClass {
                 day: "2-digit",
                 hour: "2-digit",
                 minute: "2-digit",
-            });
+            }).toString();
 
             const preparedRecor = {
                 ...record,

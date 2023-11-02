@@ -24,31 +24,19 @@ export default (app) => {
         }
     });
 
-    const eventTemplate = {
-        "name": "",
-        "description": "",
-        "owner": "",
-        "members": ""
-      }
-
-      route.post('/', async (req, res) => {
+    route.post('/', async (req, res) => {
         console.log('Creating New Event');
         try {
             const eventData = req.body;
             if (!eventData || typeof eventData !== 'object') {
                 return res.status(400).json({ message: 'Invalid JSON data' });
             }
-        
             const createdEvent = await EventDatabase.createNewEvent(eventData);
-
-
-
-
             res.json({ message: 'Event created successfully', data: createdEvent });
         } catch (error) {
-          res.status(500).json({ message: 'Error creating event' });
+            res.status(500).json({ message: 'Error creating event' });
         }
-      });
+    });
 };
 
 
