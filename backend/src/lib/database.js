@@ -170,7 +170,27 @@ class DatabaseClass {
 }
 
 class UserDBClass extends DatabaseClass {
- 
+    async getUserByName(name){
+        try {
+            const dataPromise = super.getEntry("users",{ name: name});
+            const data = await dataPromise;
+            return data;
+        } catch (error) {
+            console.log(`getUserByName: Table "User" issue. Unable to gather data: ${JSON.stringify(obj)}`, err);
+        }
+    }
+
+    async getUserById(id){
+        try {
+            const dataPromise = super.getEntry("users",{ id: id});
+            const data = await dataPromise;
+            return data;
+        } catch (error) {
+            console.log(`getUserById: Table "User" issue. Unable to gather data: ${JSON.stringify(obj)}`, err);
+        }
+    }
+
+
     async getUserList(){
         try {
             const dataPromise = super.getTable("users");
@@ -183,10 +203,49 @@ class UserDBClass extends DatabaseClass {
   
 }
 
+class EventDBClass extends DatabaseClass {
+    async getEventById(id){
+        try {
+            const dataPromise = super.getEntry("events",{ id: id});
+            const data = await dataPromise;
+            return data;
+        } catch (error) {
+            console.log(`getUserById: Table "User" issue. Unable to gather data: ${JSON.stringify(obj)}`, err);
+        }
+    }
+
+
+    async getEventsByUserID(id){
+        try {
+            const dataPromise = super.getEntries('events',{members: `*${id}*`});
+            const data = await dataPromise;
+            return data;
+        } catch (error) {
+            console.log(`getUserList: Table "User" issue. Unable to gather data: ${JSON.stringify(obj)}`, err);
+        }
+    }
+
+    async createNewEvent(eventObj){
+        try {
+            const preparedEvent = {
+                ...eventObj,
+                members: (Array.isArray(eventObj.members) ? eventObj.members.join(',') : eventObj.members),
+            }
+            const writtenEvent = await this.getEntries('event', preparedEvent);
+            return writtenEvent[writtenEvent.length - 1].id;
+            
+        } catch (error) {
+            console.log(`getUserList: Table "User" issue. Unable to gather data: ${JSON.stringify(obj)}`, err);
+        }
+    }
+
+
+
+}
 
 export const Database = new DatabaseClass(dbpath);
 export const UserDatabase = new UserDBClass(dbpath);
-
+export const EventDatabase = new EventDBClass(dbpath);
 
 export default Database;
 Database.checkForDuplicate("users", { name:"rrandy"}).then(info => { console.log(`Checking For Duplicates:`,info ) })
