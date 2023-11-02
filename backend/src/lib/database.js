@@ -88,7 +88,17 @@ class DatabaseClass {
 
             const fields = Object.keys(obj);
             const values = Object.values(obj);
-            const sql = `SELECT * FROM ${table} WHERE ${fields.map(f => `${f} = ?`).join(" AND ")}`;
+
+            const conditions = fields.map((field, index) => {
+                if (values[index].includes('*')) {
+                    return `${field} LIKE ?`;
+                } else {
+                    return `${field} = ?`;
+                }
+            });
+            const sql = `SELECT * FROM ${table} WHERE ${conditions.join(' AND ')}`;
+             // Replace '*' with '%' for SQL wildcard in values
+            values.forEach((value, index) => { values[index] = value.replace(/\*/g, '%') });
             const entries = db.prepare(sql).all(values);
             db.close();
             return entries ? entries : false;
@@ -214,11 +224,13 @@ class EventDBClass extends DatabaseClass {
         }
     }
 
-
     async getEventsByUserID(id){
         try {
+            console.log("DEBUG:",id)
             const dataPromise = super.getEntries('events',{members: `*${id}*`});
+          
             const data = await dataPromise;
+            console.log("DEBUG:",data)
             return data;
         } catch (error) {
             console.log(`getUserList: Table "User" issue. Unable to gather data: ${JSON.stringify(obj)}`, err);
@@ -227,20 +239,77 @@ class EventDBClass extends DatabaseClass {
 
     async createNewEvent(eventObj){
         try {
+            const timestamp = new Date().toLocaleString("en-US", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+            });
+            const membersList = (Array.isArray(eventObj.members) ? 
+                                eventObj.members.map((member)=> { return member.id }).join(',') : 
+                                eventObj.members.id)
+            membersList += `,${eventObj.owner}`
             const preparedEvent = {
                 ...eventObj,
-                members: (Array.isArray(eventObj.members) ? eventObj.members.join(',') : eventObj.members),
+                owner: eventObj.owner.toString(),
+                date: timestamp,
+                active: 1,
+                members: membersList,
             }
-            const writtenEvent = await this.getEntries('event', preparedEvent);
+
+            await super.insertEntry('events', preparedEvent);
+            const writtenEvent = await super.getEntries('events', preparedEvent);
+            if(Array.isArray(eventObj.members)){
+                eventObj.members.forEach(member => {
+                    const newRecords = {
+                        event: writtenEvent[writtenEvent.length - 1].id,
+                        payer: member.id,
+                        payee: eventObj.owner,
+                        value: member.value
+                    }
+                    this.createNewRecord(newRecords)
+                });
+            } else {
+                const member = eventObj.members;
+                const newRecord = {
+                    event: writtenEvent[writtenEvent.length - 1].id,
+                    payer: member.id,
+                    payee: eventObj.owner,
+                    value: member.value
+                }
+                this.createNewRecord(newRecord)
+            }
+
             return writtenEvent[writtenEvent.length - 1].id;
-            
+
         } catch (error) {
             console.log(`getUserList: Table "User" issue. Unable to gather data: ${JSON.stringify(obj)}`, err);
         }
     }
 
+    async createNewRecord(record){
+        try {
+            const timestamp = new Date().toLocaleString("en-US", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+            });
 
+            const preparedRecor = {
+                ...record,
+                date:timestamp
+            }
 
+            await super.insertEntry('records', preparedRecor);
+            return true
+        } catch (error) {
+            console.log(`createNewEvent: Table "records" issue. Unable to write data: ${JSON.stringify(obj)}`, err);
+            return false
+        }
+    }
 }
 
 export const Database = new DatabaseClass(dbpath);
@@ -248,6 +317,3 @@ export const UserDatabase = new UserDBClass(dbpath);
 export const EventDatabase = new EventDBClass(dbpath);
 
 export default Database;
-Database.checkForDuplicate("users", { name:"rrandy"}).then(info => { console.log(`Checking For Duplicates:`,info ) })
-
-
