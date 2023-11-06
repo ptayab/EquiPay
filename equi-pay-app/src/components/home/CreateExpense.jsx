@@ -1,10 +1,20 @@
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
-import {Dialog, DialogContent, DialogTitle, IconButton, InputAdornment, TextField} from "@mui/material";
+import {
+    Box, Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    IconButton,
+    InputAdornment,
+    TextField
+} from "@mui/material";
 import React, {useState} from "react";
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import {DatePicker} from "@mui/x-date-pickers";
 import PayerSelector from "./PayerSelector";
+import CloseIcon from '@mui/icons-material/Close';
 function CreateExpense() {
     const [open, setOpen] = useState(false);
     return (
@@ -19,7 +29,12 @@ function CreateExpense() {
                 setOpen(false)
             }} open={open} fullWidth>
                 <DialogTitle>
-                    Create New Expense
+                    <Box className={'flex justify-between items-center'}>
+                        Create New Expense
+                        <IconButton onClick={() => setOpen(false)}>
+                            <CloseIcon />
+                        </IconButton>
+                    </Box>
                 </DialogTitle>
                 <DialogContent>
                     <div className={'grid grid-cols-6 gap-3'}>
@@ -71,6 +86,14 @@ function CreateExpense() {
                         <PayerSelector />
                     </div>
                 </DialogContent>
+                <DialogActions>
+                    <Button variant={'contained'}>Submit</Button>
+                    <Button
+                        onClick={() => {
+                            setOpen(false)
+                        }}
+                        variant={'outlined'} color={'inherit'}>Cancel</Button>
+                </DialogActions>
             </Dialog>
 
         </>
