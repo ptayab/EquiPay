@@ -19,7 +19,6 @@ class DatabaseClass {
             console.log(`Building new one just for you. Don't loose this one too.`)
             console.log(dbpath)
             this.createTablesFromJSON(DBtables);
-           
         }
     }
 
@@ -89,8 +88,26 @@ class DatabaseClass {
 
             const fields = Object.keys(obj);
             const values = Object.values(obj);
-            const sql = `SELECT * FROM ${table} WHERE ${fields.map(f => `${f} = ?`).join(" AND ")}`;
-            const entries = db.prepare(sql).all(values);
+
+            const conditions = fields.map((field, index) => {
+                if (typeof values[index] === 'string' && values[index].includes('*')) {
+                    return `${field} LIKE ?`;
+                } else {
+                    return `${field} = ?`;
+                }
+            });
+              
+              // Create a new array with the values replaced (if needed)
+            const sanitizedValues = values.map(value => {
+            if (typeof value === 'string') {
+                return value.replace(/\*/g, '%');
+            }
+                return value;
+            });
+              
+            const sql = `SELECT * FROM ${table} WHERE ${conditions.join(' AND ')}`;
+            
+            const entries = db.prepare(sql).all(sanitizedValues);
             db.close();
             return entries ? entries : false;
         } catch (error) {
@@ -99,7 +116,7 @@ class DatabaseClass {
         } 
     }
 
-    
+
     /**
      * 
      * @param {string} table 
@@ -173,7 +190,26 @@ class DatabaseClass {
 }
 
 class UserDBClass extends DatabaseClass {
- 
+    async getUserByName(name){
+        try {
+            const dataPromise = super.getEntry("users",{ name: name});
+            const data = await dataPromise;
+            return data;
+        } catch (error) {
+            console.log(`getUserByName: Table "User" issue. Unable to gather data: ${JSON.stringify(obj)}`, err);
+        }
+    }
+
+    async getUserById(id){
+        try {
+            const dataPromise = super.getEntry("users",{ id: id});
+            const data = await dataPromise;
+            return data;
+        } catch (error) {
+            console.log(`getUserById: Table "User" issue. Unable to gather data: ${JSON.stringify(obj)}`, err);
+        }
+    }
+
     async getUserList(){
         try {
             const dataPromise = super.getTable("users");
@@ -186,12 +222,142 @@ class UserDBClass extends DatabaseClass {
   
 }
 
+class EventDBClass extends DatabaseClass {
+    async _calculateEventBalanceForUser(eventID, userID){
+        try {
+            
+            const recordData = await super.getEntries("records",{ event: eventID});
+            let totalBalance = 0;
+            
+            recordData.forEach((record) => {
+                if (record.payer.toString() === userID) {
+
+                    totalBalance -= record.value; // Subtract for negative values
+
+                } else if (record.payee.toString() === userID) {
+       
+                    totalBalance += record.value; // Add for positive values
+                }
+            });
+               
+            return  totalBalance ;
+        } catch (error) {
+            console.log(`_calculateEventBalance: Table "Records" issue. Unable to gather data: ${eventID}`, error);
+        }
+    }
+
+
+    async getEventById(id){
+        try {
+            const eventData = await super.getEntry("events",{ id: id});
+            prepareEvent = {
+                ...eventData,
+                members: eventData.members.split(','),
+                date: eventData.date.toString(),
+            }
+            return prepareEvent;
+        } catch (error) {
+            console.log(`getUserById: Table "User" issue. Unable to gather data: ${JSON.stringify(obj)}`, err);
+        }
+    }
+
+    async getEventsByUserID(id){
+        try {
+            const eventArray = await super.getEntries('events',{members: `*${id}*`});
+            const prepareEvents =  Promise.all(eventArray.map(async (eventItem)=> {
+                const balance = await this._calculateEventBalanceForUser(eventItem.id, id)
+                console.log("DEBUG:", balance) 
+                return {
+                    ...eventItem,
+                    members: eventItem.members.split(','),
+                    date: eventItem.date.toString(),
+                    balance: balance
+                }
+            }));
+            return await prepareEvents;
+        } catch (error) {
+            console.log(`getUserList: Table "User" issue. Unable to gather data: ${JSON.stringify(obj)}`, err);
+        }
+    }
+
+    async createNewEvent(eventObj){
+        try {
+            const timestamp = new Date().toLocaleString("en-US", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+            }).toString();
+
+            let membersList = (Array.isArray(eventObj.members) ? 
+                                eventObj.members.map((member)=> { return member.id }).join(',') : 
+                                eventObj.members.id); membersList += `,${eventObj.owner}`
+
+            console.log("DEBUG:",membersList)
+            const preparedEvent = {
+                ...eventObj,
+                owner: eventObj.owner.toString(),
+                date: timestamp,
+                active: 1,
+                members: membersList,
+            }
+           
+            await super.insertEntry('events', preparedEvent);
+            const writtenEvent = await super.getEntries('events', preparedEvent);
+            if(Array.isArray(eventObj.members)){
+                eventObj.members.forEach(member => {
+                    const newRecords = {
+                        event: writtenEvent[writtenEvent.length - 1].id,
+                        payer: member.id,
+                        payee: eventObj.owner,
+                        value: member.value
+                    }
+                    this.createNewRecord(newRecords)
+                });
+            } else {
+                const member = eventObj.members;
+                const newRecord = {
+                    event: writtenEvent[writtenEvent.length - 1].id,
+                    payer: member.id,
+                    payee: eventObj.owner,
+                    value: member.value
+                }
+                this.createNewRecord(newRecord)
+            }
+            return writtenEvent[writtenEvent.length - 1].id;
+
+        } catch (error) {
+            console.log(`getUserList: Table "User" issue. Unable to gather data: ${JSON.stringify(obj)}`, err);
+        }
+    }
+
+    async createNewRecord(record){
+        try {
+            const timestamp = new Date().toLocaleString("en-US", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+            }).toString();
+
+            const preparedRecor = {
+                ...record,
+                date:timestamp
+            }
+
+            await super.insertEntry('records', preparedRecor);
+            return true
+        } catch (error) {
+            console.log(`createNewEvent: Table "records" issue. Unable to write data: ${JSON.stringify(obj)}`, err);
+            return false
+        }
+    }
+}
 
 export const Database = new DatabaseClass(dbpath);
 export const UserDatabase = new UserDBClass(dbpath);
-
+export const EventDatabase = new EventDBClass(dbpath);
 
 export default Database;
-Database.checkForDuplicate("users", { name:"rrandy"}).then(info => { console.log(`Checking For Duplicates:`,info ) })
-
-
