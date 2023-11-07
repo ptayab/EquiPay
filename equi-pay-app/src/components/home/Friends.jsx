@@ -7,10 +7,11 @@ import AddFriend from "./AddFriend";
 
 function Friends() {
     const friends = [
-        { name: 'Corey', needPay: 12 },
-        { name: 'Randy', needPay: 8 },
-        { name: 'Vince', needPay: 17 },
+        { name: 'Friend 1', needPay: 12 },
+        { name: 'Friend 2', needPay: 8 },
+        { name: 'Friend 3', needPay: 17 },
     ];
+
 
     return (
         <div className="container mx-auto mt-5">
@@ -28,9 +29,7 @@ function Friends() {
                         </div>
                         <div>
                             <h2 className="text-lg font-semibold">{friend.name}</h2>
-
-                            <p className="text-gray-600">Owns you: {friend.needPay}</p>
-
+                            <p className="text-gray-600">Mutual Friends: {friend.needPay}</p>
                         </div>
                     </li>
                 ))}

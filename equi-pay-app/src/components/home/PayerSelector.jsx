@@ -8,11 +8,11 @@ import GroupsSelector from "./GroupsSelector";
 const friends = [
     {
         id: 1,
-        name: 'Dale'
+        name: 'Corey'
     },
     {
         id: 2,
-        name: 'Steezy'
+        name: 'Randy'
     }
 ]
 function PayerSelector() {
@@ -37,9 +37,8 @@ function PayerSelector() {
         <div>
             <h2 className={'text-xl font-bold mb-3'}>Payer</h2>
             <Stack direction={'row'} spacing={1}>
-                <Chip label="Dale" variant="outlined" onDelete={handleDelete} />
+                <Chip label="Corey" variant="outlined" onDelete={handleDelete} />
                 <Chip label="Steezy" variant="outlined" onDelete={handleDelete} />
-
             </Stack>
             <div className={'mt-3'}>
 
