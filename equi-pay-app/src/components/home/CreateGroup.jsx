@@ -5,6 +5,7 @@ import * as yup from 'yup';
 import AddIcon from "@mui/icons-material/Add";
 
 function CreateGroupDialog({ onGroupCreated }) {
+    
     const [open, setOpen] = useState(false);
 
     const handleClickOpen = () => {
@@ -36,10 +37,10 @@ function CreateGroupDialog({ onGroupCreated }) {
                 });
 
                 if (response.ok) {
-                    console.log('Group created successfully');
                     handleClose();
+
                     // Invoke the callback to update the list of groups
-                    onGroupCreated();
+                    onGroupCreated(values);
                 } else {
                     console.error('Failed to create the group');
                 }

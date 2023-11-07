@@ -27,8 +27,10 @@ function Groups() {
         // Function to update the list of groups when a new group is created
     const onGroupCreated = (newGroup) => {
         // Update the state with the new group
-
+        console.log("newGroup");
+        console.log(newGroup.name);
         setJoinedGroups([...joinedGroups, newGroup]);
+        console.log("after s")
     };
 
     return (
