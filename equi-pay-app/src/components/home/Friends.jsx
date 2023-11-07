@@ -7,9 +7,9 @@ import AddFriend from "./AddFriend";
 
 function Friends() {
     const friends = [
-        { name: 'Corey', needPay: 12 },
-        { name: 'Randy', needPay: 8 },
-        { name: 'Vince', needPay: 17 },
+        { name: 'Randy', needPay: 12 },
+        { name: 'Steezy', needPay: 8 },
+        { name: 'Bob', needPay: 17 },
     ];
 
     return (
@@ -28,9 +28,7 @@ function Friends() {
                         </div>
                         <div>
                             <h2 className="text-lg font-semibold">{friend.name}</h2>
-
-                            <p className="text-gray-600">Owns you: {friend.needPay}</p>
-
+                            <p className="text-gray-600">Owns you: {friend.needPay}$</p>
                         </div>
                     </li>
                 ))}

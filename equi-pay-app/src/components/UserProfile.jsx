@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams,Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+import SettleUp from './SettleUp';
 
 function UserProfile() {
   const { userId } = useParams();
@@ -27,7 +28,13 @@ function UserProfile() {
       <h1>User Profile</h1>
       <p>ID: {userId}</p>
       <p>Username: {username}</p>
+
+    <>
+    <Link to="/SettleUp"><button className="add-posts-button">Settle Up</button></Link>
+    </>
+
     </div>
+
   );
 }
 
