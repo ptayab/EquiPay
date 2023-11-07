@@ -20,11 +20,11 @@ function Header() {
         </li>
 
         <li>
-          <Link to="/login">login</Link> 
+          <Link to="/login">Login</Link> 
         </li>
 
         <li>
-          <Link to="/register">register</Link> 
+          <Link to="/register">Register</Link> 
         </li>
       </ul>
       <h1>Equipay</h1>
