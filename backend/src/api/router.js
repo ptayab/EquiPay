@@ -1,15 +1,15 @@
 import { Router as RouterExpress } from "express";
-import Test from "./routes/test.route.js"
-import User from "./routes/user.route.js"
-import Groups from "./routes/groups.route.js"
-import Event from "./routes/event.route.js"
+import Test from "./routes/test.js"
+import Users from "./routes/users.js"
+import Groups from "./routes/groups.js"
+import Expenses from "./routes/expenses.js"
 
 // guaranteed to get dependencies
 export default () => {
   const app = RouterExpress();
   Test(app);
-  User(app);
+  Users(app);
   Groups(app);
-  Event(app);
+  Expenses(app);
   return app;
 };
