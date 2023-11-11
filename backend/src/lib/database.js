@@ -92,7 +92,6 @@ class DatabaseClass {
             // Map the keys and values
             const fields = Object.keys(obj);
             const values = Object.values(obj);
-            console.log("DEBUGGER", obj);
             // Changes the oparators pending on if there is a wild card or not
             const conditions = fields.map((field, index) => {
                 if (typeof values[index] === 'string' && values[index].includes('*')) {
@@ -188,7 +187,7 @@ class DatabaseClass {
             const conditions = Object.keys(obj).map((key) => `${key} = ?`).join(' AND ');
             const values = Object.values(condition);
 
-            // Run SQL Query on the DB  
+            // Run SQL Query de the DB  
             const sql = `DELETE FROM ${table} WHERE ${conditions}`;
 
             // Run SQL Query on the DB  

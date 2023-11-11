@@ -16,7 +16,7 @@ const DatabaseConfig = {
             name: "groups",
             sql: `
                 CREATE TABLE IF NOT EXISTS groups (
-                    groupid INTEGER PRIMARY KEY,
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
                     groupname TEXT,
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -41,7 +41,7 @@ const DatabaseConfig = {
             name: "expenses",
             sql: `
                 CREATE TABLE IF NOT EXISTS expenses (
-                    expenseid INTEGER PRIMARY KEY,
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
                     totalamount REAL,
                     balance REAL,
                     amountowed REAL,
