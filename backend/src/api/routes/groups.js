@@ -12,13 +12,22 @@ export default (app) => {
     route.get("/", async (req, res) => {
         try {
             // Retrive Query Details from 
-            const { name, id } = req.query; 
-            // Search by name
-            if (name) res.json(await Database.getEntry("groups", { name: name }));
-            // Search by ID    
-            else if (id) res.json(await Database.getEntry('groups', { id: id }));
-            // Return all
-            else res.json(await Database.getTable("groups"));      
+            const { name, id, user_id , group_id } = req.query; 
+            
+            // if "group_id" is passed as a query instead
+            if(group_id) id = group_id;
+
+            res.json(await Database.getEntries(
+                "groups",
+                id ? {
+                    "id":id
+                } : { 
+                    "name": name ? name : "*",
+                    "user_groups.user_id": user_id ? user_id : "*",
+                },
+                (!id && user_id)  ? [ { table: 'user_groups', on: 'groups.id = user_groups.group_id' } ] : [] 
+            ))
+
         } catch (error) {
             res.status(500).json({ message: "Failure to retrieve GROUP data", error: error });
         }

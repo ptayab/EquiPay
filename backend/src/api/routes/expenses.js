@@ -16,14 +16,20 @@ export default (app) => {
     // GET ALL EXPENSES 
     //      or
     //  'id' as a query
+    // you can use any combination of the quiries to filter your request
     route.get("/", async (req, res) => {
         try {
-            // Retrive Query Details from 
-            const { id } = req.query; 
-            // Search by ID    
-            if (id) res.json(await Database.getEntry('expenses', { id: id }));
-            // Return all
-            else res.json(await Database.getTable("expenses"));      
+            // Retrive Query Details from request
+            const { id, user_id, group_id } = req.query; 
+            res.json(await Database.getEntries(
+                'expenses', 
+                { 
+                    id: id ? id : "*",
+                    user_id: user_id ? user_id : "*",
+                    group_id: group_id ? group_id : "*",   
+                }
+            ));
+
         } catch (error) {
             res.status(500).json({ message: "Failure to retrieve EXPENSE data", error: error });
         }
@@ -55,44 +61,4 @@ export default (app) => {
             res.status(500).json({ message: "Failure to update EXPENSE", error: error });
         }
     });
-
-    // Get all expenses in a group
-    route.get("/group/:GroupID", async (req, res) => {
-        try {
-            const  GroupID  = req.params.GroupID;
-            if( !GroupID ) return res.status(500).json({ message: `Missing Needed Fields "GroupID" ` });
-            const { id:UserID } = req.query; 
-          
-            // If no user is declared, return entire group otherwise filter with user ID
-            const groupExpenses = await Database.getEntries(
-                "expenses",
-                { 
-                    'group_id': GroupID,
-                    'user_id': UserID ? UserID : "*"
-                }
-            );
-            res.json(groupExpenses)
-            
-
-        } catch (error) {
-            res.status(500).json({ message: "Failure to get EXPENSE for GROUP", error: error });
-        }
-    });
-
-    route.get("/group/user", async (req, res) => {
-        try {
-            const { id:UserID } = req.query; 
-          
-            const groupExpenses = await Database.getEntries(
-                "expenses",
-                { 'group_id': UserID }
-            );
-            res.json(groupExpenses)
-        } catch (error) {
-            res.status(500).json({ message: "Failure to get EXPENSE for GROUP", error: error });
-        }
-    });
-    
-
-
 }
