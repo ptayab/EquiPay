@@ -4,7 +4,15 @@ import Database from "../../lib/database.js";
 const route = Router();
 export default (app) => {
     app.use("/expenses", route);
-    
+    /*
+        description TEXT,
+        totalamount REAL,
+        balance REAL,
+        user_id INTEGER,
+        group_id INTEGER,
+    */
+
+
     // GET ALL EXPENSES 
     //      or
     //  'id' as a query
@@ -13,9 +21,9 @@ export default (app) => {
             // Retrive Query Details from 
             const { id } = req.query; 
             // Search by ID    
-            if (id) res.json(await Database.getEntry('groups', { id: id }));
+            if (id) res.json(await Database.getEntry('expenses', { id: id }));
             // Return all
-            else res.json(await Database.getTable("groups"));      
+            else res.json(await Database.getTable("expenses"));      
         } catch (error) {
             res.status(500).json({ message: "Failure to retrieve EXPENSE data", error: error });
         }
@@ -26,8 +34,7 @@ export default (app) => {
             // Parse Post Body
             const requestData = req.body;
             // Create Group and initialize, returns the entry ID
-            const entryID = await Database
-                .insertEntry(
+            const entryID = await Database.insertEntry(
                     "expenses",
                     requestData 
                 );
@@ -49,15 +56,36 @@ export default (app) => {
         }
     });
 
-
-    route.get("/group/:groupID", async (req, res) => {
+    // Get all expenses in a group
+    route.get("/group/:GroupID", async (req, res) => {
         try {
-            const groupID = req.params.groupID;
+            const  GroupID  = req.params.GroupID;
+            if( !GroupID ) return res.status(500).json({ message: `Missing Needed Fields "GroupID" ` });
+            const { id:UserID } = req.query; 
+          
+            // If no user is declared, return entire group otherwise filter with user ID
+            const groupExpenses = await Database.getEntries(
+                "expenses",
+                { 
+                    'group_id': GroupID,
+                    'user_id': UserID ? UserID : "*"
+                }
+            );
+            res.json(groupExpenses)
+            
+
+        } catch (error) {
+            res.status(500).json({ message: "Failure to get EXPENSE for GROUP", error: error });
+        }
+    });
+
+    route.get("/group/user", async (req, res) => {
+        try {
+            const { id:UserID } = req.query; 
           
             const groupExpenses = await Database.getEntries(
                 "expenses",
-                { 'user_groups.group_id': groupID },
-                [{ table: 'user_groups', on: 'expenses.user_id = user_groups.user_id' }]
+                { 'group_id': UserID }
             );
             res.json(groupExpenses)
         } catch (error) {

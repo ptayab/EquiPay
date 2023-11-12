@@ -26,26 +26,31 @@ export default (app) => {
 
     // POST TO CREATE NEW GROUP
     // Requires JSON Body, and at least a 'name' and 'user_id' field
+    // Is going to need a name and an array of ID's that contain member ID's
     route.post("/", async (req, res) => { 
         try {
             // Parse Post Body
-            const requestData = req.body;
+            const { name, members } = req.body;
+            if( !name || !members) return res.status(500).json({ message: "Missing Needed Fields" });
             // Create Group and initialize, returns the entry ID
-            const groupID = await Database.insertEntry(
-                "groups",
-                requestData 
-            );
-            // Creates the user_groups link using passed user ID and the 
-            // returned ID of the group
-            const user_groupsID = await Database.insertEntry(
-                "user_groups",
-                { 
-                    user_id: requestData.user_id,
-                    group_id: groupID
-                } 
-            );
+            const group_id = await Database.insertEntry(
+                    "groups",
+                    { name: name } 
+                );
 
-            res.json({ id: groupID });
+            members.forEach(async member => {
+                console.log(member, group_id)
+                const linkID =  await Database.insertEntry(
+                        "user_groups",
+                        {
+                            user_id: member,
+                            group_id: group_id
+                        }
+                    )
+                return linkID
+            });
+
+            res.json({ message: "Success", id: group_id });
         } catch (error) {
             res.status(500).json({ message: "Failure to create GROUP", error: error });
         }
@@ -62,30 +67,48 @@ export default (app) => {
             res.status(500).json({ message: "Failure to create GROUP", error: error });
         }
     });
-
-    /*
-        Add a user to a group.
-        Expecting: {
-            user_id INTEGER,
-            group_id INTEGER,
-        }
-
-    */
-
-    route.post("/adduser", async (req, res) => { 
+    
+    // Add user to existing group
+    route.post("/user", async (req, res) => { 
         try {
             // Parse Post Body
-            const requestData = req.body;
+            const { group_id, user_id } = req.body;
+            if( !group_id || !user_id) return res.status(500).json({ message: "Missing Needed Fields" });
             // Create Group and initialize, returns the entry ID
-            const groupID = await Database.insertEntry(
+            console.log(req.body)
+            const linkID =  await Database.insertEntry(
                 "user_groups",
-                requestData 
-            );
+                {
+                    user_id: user_id,
+                    group_id: group_id
+                }
+            )
 
-            res.json({ id: groupID });
+            res.json({message: "Success", id: linkID });
         } catch (error) {
             res.status(500).json({ message: "Failure to create GROUP", error: error });
         }
     })
+
+    // Get all groups for a user ID
+    route.get("/user", async (req, res) => {
+        try {
+            // Retrive Query Details from 
+            const { id:UserID } = req.query; 
+            if( !UserID ) return res.status(500).json({ message: "Missing Needed Fields" });
+            console.log("DEBUG","GET Groups/forUser",UserID)
+            const response = await Database.getEntries(
+                "groups",
+                { "user_groups.user_id": UserID },
+                [ { table: 'user_groups', on: 'groups.id = user_groups.group_id' } ]
+            )
+
+            res.json(response)
+    
+        } catch (error) {
+            res.status(500).json({ message: "Failure to retrieve GROUP data", error: error });
+        }
+    })
+  
 
 }

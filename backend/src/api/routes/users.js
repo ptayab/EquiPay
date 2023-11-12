@@ -13,13 +13,15 @@ export default (app) => {
     route.get("/", async (req, res) => {
         try {
             // Retrive Query Details from 
-            const { name, id } = req.query; 
-            // Search by name
-            if (name) res.json(await Database.getEntry("users", { name: name }));
-            // Search by ID    
-            else if (id) res.json(await Database.getEntry('users', { id: id }));
-            // Return all
-            else res.json(await Database.getTable("users"));      
+            const { name, id, displayname } = req.query; 
+            res.json(await Database.getEntries(
+                "users", 
+                { 
+                    name: name ? name : "*",
+                    id: id ? id : "*",
+                    displayname: displayname ? displayname : "*",
+                }
+            ));
         } catch (error) {
             res.status(500).json({ message: "Failure to retrieve user Data" });
         }
@@ -32,7 +34,7 @@ export default (app) => {
             const requestData = req.body;
             // Create Group and initialize, returns the entry ID
             const entryID = await Database.insertEntry("users",requestData);
-            res.json({ id: entryID });
+            res.json({ message: "Success", id: entryID });
         } catch (error) {
             res.status(500).json({ message: "Failure to create GROUP", error: error });
         }
