@@ -8,6 +8,7 @@ export default (app) => {
     // GET ALL GROUPS 
     //      or
     // Group 'name' or 'id' as a query
+    // localhost:4000/api/groups?id=3
     route.get("/", async (req, res) => {
         try {
             // Retrive Query Details from 

@@ -8,6 +8,8 @@ export default (app) => {
     // GET ALL USERS 
     //      or
     // User 'name' or 'id' as a query
+    // Example: localhost:4000/api/users?id=3
+
     route.get("/", async (req, res) => {
         try {
             // Retrive Query Details from 
@@ -49,7 +51,17 @@ export default (app) => {
         }
     });
 
-
+    route.delete("/", async (req, res) => { 
+        try {
+            // Parse Post Body
+            const requestData = req.body;
+            // Update the attached entry, need to contain "id" to find the right one
+            const response = await Database.removeEntry( "users", requestData );
+            res.json({ message: response ? "Success" : "Failure" });
+        } catch (error) {
+            res.status(500).json({ message: "Failure to delete USER", error: error });
+        }
+    });
     
 };
-
+ 

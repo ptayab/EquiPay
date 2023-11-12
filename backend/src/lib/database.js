@@ -1,12 +1,10 @@
 import sqlite from 'better-sqlite3';
 import fs from "fs";
 
-
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import DBConfig from "./db.config.js"
-
 
 // Name of the actual file
 const DataBase_Name = 'SQLiteDatabase.sqlite3';
@@ -24,6 +22,7 @@ class DatabaseClass {
         }
         if(!this.database) console.error()
     }
+
     async createLog(message, obj){
         try {
             if (obj.hasOwnProperty('log')) return;

@@ -4,7 +4,6 @@ import Database from "../../lib/database.js";
 const route = Router();
 export default (app) => {
     app.use("/expenses", route);
-
     
     // GET ALL EXPENSES 
     //      or
@@ -55,7 +54,7 @@ export default (app) => {
         try {
             const groupID = req.params.groupID;
           
-           const groupExpenses = await Database.getEntries(
+            const groupExpenses = await Database.getEntries(
                 "expenses",
                 { 'user_groups.group_id': groupID },
                 [{ table: 'user_groups', on: 'expenses.user_id = user_groups.user_id' }]
