@@ -3,9 +3,9 @@ import CreateExpense from "./CreateExpense";
 import * as fetch from "./../../lib/fetch"
 import { useParams } from 'react-router-dom';
 
-function NeedToPayFees(callback) {
+function NeedToPayFees({callback}) {
     const { userId } = useParams();
-    const { profileStatus, setProfileStatus } = callback;
+    const {  profileStatus, setProfileStatus  } = callback;
 
 
     const feesToPay = [
@@ -30,8 +30,8 @@ function NeedToPayFees(callback) {
     
             async function fetchData() {
                 try {
-                    const data = await fetch.get("expenses",{ user_id: userId});
-                    console.log(data)
+                    console.log(profileStatus)
+                    const data = await fetch.get("expenses",{ user_id: userId , group_id: profileStatus.group });
                     setExpenses(sortData(data, 'created_at'));
     
                 } catch (error) {
@@ -39,7 +39,7 @@ function NeedToPayFees(callback) {
                 }
             }
             fetchData();
-        }, [userId]);
+        }, [userId ]);
 
     return (
         <div className="container mx-auto mt-5" style={{

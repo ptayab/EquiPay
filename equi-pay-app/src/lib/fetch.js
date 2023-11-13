@@ -17,7 +17,7 @@ export async function get(route, filters) {
     const responsePromise = await fetch(apiUrl);
     const responseData = await responsePromise.json();
     
-    console.log('ResponseData:', responseData);
+    // console.log('ResponseData:', responseData);
     
     return responseData;
 }

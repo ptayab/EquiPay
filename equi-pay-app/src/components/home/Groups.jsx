@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom';
 
 function Groups({callback}) {
     const { userId } = useParams();
-    const { profileStatus, setProfileStatus } = callback;
+    const {  profileStatus, setProfileStatus  } = callback;
     const [joinedGroups, setJoinedGroups] = useState([]);
     const [otherGroups, setOtherGroups] = useState([]);
     const [ selectedItem, setSelectedItem] = useState({id: "", valid: false});

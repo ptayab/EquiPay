@@ -13,11 +13,11 @@ function UserProfile() {
   const [profileStatus, setProfileStatus] = useState({
     id: userId,
     name: "",
-    group: null,
+    group: "*",
     expense: null,
     member: null
   });
-  
+
   useEffect(() => {
     async function fetchData() {
         try {
@@ -42,13 +42,13 @@ function UserProfile() {
             }}>
                 <Grid container spacing={2}>
                     <Grid item xs={3}>
-                        <Groups callback={{profileStatus, setProfileStatus}} />
+                        <Groups         callback={{profileStatus, setProfileStatus}} />
                     </Grid>
                     <Grid item xs={6}>
-                        <NeedToPayFees callback={{profileStatus, setProfileStatus}} />
+                        <NeedToPayFees  callback={{profileStatus, setProfileStatus}} />
                     </Grid>
                     <Grid item xs={3}>
-                        <Friends callback={{profileStatus, setProfileStatus}} />
+                        <Friends        callback={{profileStatus, setProfileStatus}} />
                     </Grid>
                 </Grid>
             </Paper>
