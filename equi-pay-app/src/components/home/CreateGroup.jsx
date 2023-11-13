@@ -28,7 +28,7 @@ function CreateGroupDialog({ onGroupCreated }) {
                 Fetch.post("groups",request).then((reponse)=> {
                     if (!reponse) console.error('Failed to create the group');
                     handleClose();
-                    onGroupCreated(reponse);
+                    onGroupCreated({id: reponse.id, name: values.groupName});
                 })
 
 
