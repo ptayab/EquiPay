@@ -1,5 +1,3 @@
-import * as GetFunctions from ""
-
 
 export async function TestGet() {
     const responsePromise = fetch('http://localhost:4000/api/test');

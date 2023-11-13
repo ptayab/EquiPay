@@ -5,7 +5,8 @@ import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import AddIcon from "@mui/icons-material/Add";
 import AddFriend from "./AddFriend";
 
-function Friends() {
+function Friends(callback) {
+    const { profileStatus, setProfileStatus } = callback;
     const friends = [
         { name: 'Friend 1', needPay: 12 },
         { name: 'Friend 2', needPay: 8 },

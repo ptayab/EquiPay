@@ -13,21 +13,17 @@ export default (app) => {
         try {
             // Retrive Query Details from 
             const { name, id, user_id , group_id } = req.query; 
-            
-            // if "group_id" is passed as a query instead
-            if(group_id) id = group_id;
-
             res.json(await Database.getEntries(
                 "groups",
                 id ? {
                     "id":id
                 } : { 
                     "name": name ? name : "*",
-                    "user_groups.user_id": user_id ? user_id : "*",
+                    ...(user_id ? { "user_groups.user_id": user_id } : {}),
                 },
                 (!id && user_id)  ? [ { table: 'user_groups', on: 'groups.id = user_groups.group_id' } ] : [] 
             ))
-
+                
         } catch (error) {
             res.status(500).json({ message: "Failure to retrieve GROUP data", error: error });
         }
@@ -82,7 +78,7 @@ export default (app) => {
         try {
             // Parse Post Body
             const { group_id, user_id } = req.body;
-            if( !group_id || !user_id) return res.status(500).json({ message: "Missing Needed Fields" });
+            if( !group_id || !user_id) return res.status(500).json({ message: "Missing Needed Fields group_id, user_id" });
             // Create Group and initialize, returns the entry ID
             console.log(req.body)
             const linkID =  await Database.insertEntry(
@@ -111,7 +107,7 @@ export default (app) => {
                 { "user_groups.user_id": UserID },
                 [ { table: 'user_groups', on: 'groups.id = user_groups.group_id' } ]
             )
-
+            
             res.json(response)
     
         } catch (error) {

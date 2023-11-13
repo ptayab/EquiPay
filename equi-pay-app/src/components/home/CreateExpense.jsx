@@ -137,7 +137,7 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import { DatePicker } from '@mui/x-date-pickers';
 import Button from '@mui/material/Button';
 
-function CreateExpense({ addExpenseLocally }) {
+function CreateExpense({ addExpenseLocally, callback }) {
   const [open, setOpen] = useState(false);
   const [expenseData, setExpenseData] = useState({
     description: '',

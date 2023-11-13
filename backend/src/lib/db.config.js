@@ -36,7 +36,8 @@ const DatabaseConfig = {
             sql: `
                 CREATE TABLE IF NOT EXISTS expenses (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    description TEXT,
+                    name TEXT,
+                    notes TEXT,
                     total REAL,
                     balance REAL,
                     user_id INTEGER,
