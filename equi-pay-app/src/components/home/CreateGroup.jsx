@@ -1,24 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {Button, Dialog, DialogContent, DialogTitle, TextField, Box, IconButton} from '@mui/material';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import AddIcon from "@mui/icons-material/Add";
+import * as Fetch from "./../../lib/fetch"
+import { useParams } from 'react-router-dom';
 
 function CreateGroupDialog({ onGroupCreated }) {
-    
+    const { userId } = useParams();
     const [open, setOpen] = useState(false);
-
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    const validationSchema = yup.object({
-        groupName: yup.string().required('Group Name is required'),
-    });
+    const handleClickOpen = () => { setOpen(true) };
+    const handleClose = () => { setOpen(false) };
+    const validationSchema = yup.object({ groupName: yup.string().required('Group Name is required') });
 
     const formik = useFormik({
         initialValues: {
@@ -28,22 +21,33 @@ function CreateGroupDialog({ onGroupCreated }) {
         onSubmit: async (values) => {
             try {
                 // Send an HTTP POST request to your server to create the group
-                const response = await fetch('http://localhost:4000/api/groups/addgroup', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(values),
-                });
-
-                if (response.ok) {
-                    handleClose();
-
-                    // Invoke the callback to update the list of groups
-                    onGroupCreated(values);
-                } else {
-                    console.error('Failed to create the group');
+                const request = {
+                    "name": values.groupName,
+                    "members":  [ userId ]
                 }
+                Fetch.post("groups",request).then((reponse)=> {
+                    if (!reponse) console.error('Failed to create the group');
+                    handleClose();
+                    onGroupCreated({id: reponse.id, name: values.groupName});
+                })
+
+
+                // const response = await fetch('http://localhost:4000/api/groups/addgroup', {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //     },
+                //     body: JSON.stringify(values),
+                // });
+
+                // if (response.ok) {
+                //     handleClose();
+
+                //     // Invoke the callback to update the list of groups
+                //     onGroupCreated(values);
+                // } else {
+                //     console.error('Failed to create the group');
+                // }
             } catch (error) {
                 console.error('Error creating the group', error);
             }
