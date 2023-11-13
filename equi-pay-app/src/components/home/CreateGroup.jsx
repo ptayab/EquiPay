@@ -26,27 +26,9 @@ function CreateGroupDialog({ onGroupCreated }) {
         },
         validationSchema: validationSchema,
         onSubmit: async (values) => {
-            try {
-                // Send an HTTP POST request to your server to create the group
-                const response = await fetch('http://localhost:4000/api/groups/addgroup', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(values),
-                });
-
-                if (response.ok) {
-                    handleClose();
-
-                    // Invoke the callback to update the list of groups
-                    onGroupCreated(values);
-                } else {
-                    console.error('Failed to create the group');
-                }
-            } catch (error) {
-                console.error('Error creating the group', error);
-            }
+            onGroupCreated(values)
+            setOpen(false)
+            formik.resetForm();
         },
     });
 

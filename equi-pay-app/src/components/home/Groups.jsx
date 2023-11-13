@@ -1,36 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import GroupsIcon from '@mui/icons-material/Groups';
-import { Button } from "@mui/material";
+import {Avatar, Button} from "@mui/material";
 import CreateGroupDialog from "./CreateGroup";
 import JoinGroup from "./JoinGroup";
+import {authedRequest} from "../../http";
 
 function Groups() {
     const grouptext = '';
     const [joinedGroups, setJoinedGroups] = useState([]);
-
+    const [reloadGroups, setReloadGroups] = useState(true);
     useEffect(() => {
         // Fetch group data from the server when the component mounts
-        fetch('http://localhost:4000/api/groups/all')
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
+        authedRequest.get(`/api/groups`)
+            .then(res => {
+                if (res && res.data) {
+                   setJoinedGroups(res.data);
                 }
-                throw new Error('Network response was not ok');
-            })
-            .then((data) => {
-                setJoinedGroups(data.data);
+            }).catch(err => {
 
-            })
-            .catch((error) => console.error('Error fetching group data', error));
-    }, []);
+        })
+
+
+    }, [reloadGroups]);
 
         // Function to update the list of groups when a new group is created
-    const onGroupCreated = (newGroup) => {
-        // Update the state with the new group
-        console.log("newGroup");
-        console.log(newGroup.name);
-        setJoinedGroups([...joinedGroups, newGroup]);
-        console.log("after s")
+    const onGroupCreated = async ({groupName}) => {
+        try {
+            await authedRequest.post(`/api/groups`, {
+                name: groupName,
+                members: []
+            });
+            setReloadGroups(!reloadGroups);
+
+        } catch (err) {
+
+        }
     };
 
     return (
@@ -46,13 +50,14 @@ function Groups() {
             {joinedGroups.map((group, index) => (
     <li key={index} className="flex items-center p-4 rounded-lg shadow-md bg-white">
         <div className="rounded-full h-8 w-8 bg-blue-500 text-white flex items-center justify-center mr-4">
-            {group && group.name ? group.name : 'No Name Available'}
+            <Avatar>
+                {group.name[0]}
+            </Avatar>
         </div>
         <div>
             <h2 className="text-lg font-semibold">
                 {group && group.name ? group.name : 'No Name Available'}
             </h2>
-            {/* You can include other information here if available */}
         </div>
     </li>
 ))}

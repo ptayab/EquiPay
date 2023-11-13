@@ -141,16 +141,19 @@ function CreateExpense({ addExpenseLocally }) {
   const [open, setOpen] = useState(false);
   const [expenseData, setExpenseData] = useState({
     description: '',
-    amount: 0,
+    amount: 100,
     notes: '',
+    date: null
   });
 
-  const handleCreateExpense = () => {
+  const handleCreateExpense = (e) => {
+    e.preventDefault();
     const newExpense = {
       id: new Date().getTime(), // You can use a unique ID generation method
       description: expenseData.description,
       amount: parseFloat(expenseData.amount),
       notes: expenseData.notes,
+      created_at: expenseData?.date.format('YYYY-MM-DD HH:mm:ss')
     };
 
     // Add the expense locally by calling the prop function
@@ -159,8 +162,9 @@ function CreateExpense({ addExpenseLocally }) {
     // Optionally, you can reset the form or close the dialog
     setExpenseData({
       description: '',
-      amount: 0,
+      amount: 100,
       notes: '',
+      date: null
     });
     setOpen(false);
   };
@@ -174,7 +178,7 @@ function CreateExpense({ addExpenseLocally }) {
       <Dialog onClose={() => setOpen(false)} open={open} fullWidth>
         <DialogTitle>Create New Expense</DialogTitle>
         <DialogContent>
-          <div className="grid grid-cols-6 gap-3">
+          <form onSubmit={handleCreateExpense} className="grid grid-cols-6 gap-3">
             <div className="col-span-2">
               <ReceiptIcon
                 style={{
@@ -186,6 +190,8 @@ function CreateExpense({ addExpenseLocally }) {
             <div className="col-span-4">
               <p className="font-bold mb-2">Expense Description</p>
               <TextField
+
+                  required
                 fullWidth
                 label="Expense description"
                 size="small"
@@ -197,6 +203,7 @@ function CreateExpense({ addExpenseLocally }) {
               <p className="font-bold mb-2 mt-4">Expense Amount</p>
               <div className="flex items-center gap-4">
                 <TextField
+                    required
                   type="number"
                   className="w-1/2"
                   InputProps={{
@@ -212,7 +219,15 @@ function CreateExpense({ addExpenseLocally }) {
                     setExpenseData({ ...expenseData, amount: e.target.value })
                   }
                 />
-                <DatePicker />
+                <DatePicker
+                  value={expenseData.date}
+                  onChange={e => {
+                    setExpenseData({
+                      ...expenseData,
+                      date: e
+                    })
+                  }}
+                />
               </div>
               <p className="font-bold mb-2 mt-4">Add Notes</p>
               <TextField
@@ -226,12 +241,13 @@ function CreateExpense({ addExpenseLocally }) {
                 }
               />
             </div>
-          </div>
-          <div className="mt-3">
-            <Button variant="contained" onClick={handleCreateExpense}>
-              Confirm
-            </Button>
-          </div>
+            <div className="mt-3">
+              <Button variant="contained" type={'submit'}>
+                Confirm
+              </Button>
+            </div>
+          </form>
+
         </DialogContent>
       </Dialog>
     </>

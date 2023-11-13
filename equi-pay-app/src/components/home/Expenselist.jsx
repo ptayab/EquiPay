@@ -1,20 +1,28 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import CreateExpense from "./CreateExpense";
 import ExpenseDetail from "./ExpenseDetail";
 
 import { IconButton, TextField, Dialog, DialogContent, DialogTitle, Button, InputAdornment } from "@mui/material";
+import {authedRequest} from "../../http";
 function NeedToPayFees() {
-    const [feesToPay, setFeesToPay] = useState([
-        { title: 'Electric Bill', Date: '2023-11-15', amount: 50 },
-        { title: 'Rent', Date: '2023-11-30', amount: 800 },
-        { title: 'Internet Subscription', Date: '2023-11-25', amount: 60 },
-      ]);
+    const [feesToPay, setFeesToPay] = useState([]);
 
+    const [reloadExpense, setReloadExpense] = useState(true);
     const [openedExpense, setOpenedExpense] = useState();
-    const addExpense = (newExpense) => {
-        setFeesToPay([...feesToPay, newExpense]);
-      };
+    const addExpense = async (newExpense) => {
+        try {
+            await authedRequest.post(`/api/expenses`, {
+                totalamount: newExpense.amount,
+                name: newExpense.description,
+                notes: newExpense.notes,
+                created_at: newExpense.created_at
+            });
+            setReloadExpense(!reloadExpense)
+        } catch (err) {
+            console.log(err);
+        }
+    };
     
       const [open, setOpen] = useState(false);
       const [selectedExpenseIndex, setSelectedExpenseIndex] = useState(null);
@@ -41,7 +49,18 @@ function NeedToPayFees() {
         // Close the dialog
         handleCloseDialog();
       };
-    
+
+    useEffect(() => {
+        authedRequest.get(`/api/expenses`)
+            .then(res => {
+                if (res && res.data) {
+                    console.log(res.data)
+                    setFeesToPay(res.data)
+                }
+            }).catch(err => {
+                console.log(err);
+        })
+    }, [reloadExpense]);
 
     return (
         <div className="container mx-auto mt-5" style={{
@@ -49,7 +68,7 @@ function NeedToPayFees() {
             overflow: 'auto'
         }}>
             <h1 className="text-2xl font-semibold mb-4">Expenses
-            <CreateExpense addExpense={addExpense} />
+            <CreateExpense addExpenseLocally={addExpense} />
             </h1>
             <ul className="space-y-4">
                 {feesToPay.map((fee, index) => (
@@ -58,17 +77,17 @@ function NeedToPayFees() {
                             <div className="w-1/2">
                                 <h2
                                     onClick={() => {
-                                        if (openedExpense !== fee.title) {
-                                            setOpenedExpense(fee.title);
+                                        if (openedExpense !== fee.name) {
+                                            setOpenedExpense(fee.name);
                                         } else {
                                             setOpenedExpense(null);
                                         }
                                     }}
-                                    className="text-lg font-semibold underline cursor-pointer">{fee.title}</h2>
-                                <p className="text-gray-600">Date: {fee.Date}</p>
+                                    className="text-lg font-semibold underline cursor-pointer">{fee.name}</h2>
+                                <p className="text-gray-600">Date: {fee.created_at}</p>
                             </div>
                             <div className="w-1/2 text-right">
-                                <p className="text-lg font-semibold">${fee.amount}</p>
+                                <p className="text-lg font-semibold">${fee.totalamount}</p>
                                 <div className="w-1/2 text-right">
               <Button variant="contained" onClick={() => handleOpenDialog(index)}>
                 Settle Up
@@ -76,7 +95,7 @@ function NeedToPayFees() {
             </div>
                             </div>
                         </div>
-                        {openedExpense === fee.title && (
+                        {openedExpense === fee.name && (
                             <div>
                                 <ExpenseDetail expense={fee}/>
                             </div>
