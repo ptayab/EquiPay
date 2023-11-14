@@ -36,10 +36,9 @@ function App() {
                         <Route path="/register"         element={<Register />} />
                         <Route path="/contact"          element={<Contact />} />
                         <Route path="/user/:userId/*"   element={<UserProfile />}>
-                            <Route path="dashboard"         element={<UserProfile />} /> 
-                    
+                            <Route path="dashboard"         element={<UserProfile />} />
                         </Route>
-                        <Route path="/ExpenseList" element={<ExpenseList />} />
+                        <Route path="/user/:userId/expenseList/group/:groupId" element={<ExpenseList />} />
                     </Routes>
                 </Router>
             </UserProvider>

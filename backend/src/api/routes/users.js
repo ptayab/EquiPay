@@ -72,7 +72,7 @@ export default (app) => {
         try {
             // Retrieve the group ID from the query parameters
             const { group_id } = req.query;
-
+            console.log(group_id)
             if (!group_id) {
                 return res.status(400).json({ message: "Missing group_id in the query parameters" });
             }
@@ -87,6 +87,7 @@ export default (app) => {
             res.json(response);
 
         } catch (error) {
+
             res.status(500).json({ message: "Failure to retrieve users data", error: error });
         }
     });
