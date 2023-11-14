@@ -43,7 +43,7 @@ function Groups({callback}) {
     }, [userId]);
 
     const onSelected = (item) => { 
-        setSelectedItem({id:item.id, valid:false}) 
+        setSelectedItem({...item}) 
         if(!item.valid) {
             setProfileStatus({...profileStatus, group: item.id})
         }
