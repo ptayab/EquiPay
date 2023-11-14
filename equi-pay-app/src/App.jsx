@@ -9,12 +9,16 @@ import { UserProvider } from "./context/profile.hook"
 // Component
 import Header from './components/common/Header';
 
+
 // Page Routes
 import UserList from './pages/UserList';
 import Login from './pages/login';
 import Register from './pages/register';
 import UserProfile from './pages/UserProfile';
 import Contact from './pages/contactForm';
+
+//
+import ExpenseList from './components/home/Expenselist.jsx';
 
 
 function App() {
@@ -33,8 +37,9 @@ function App() {
                         <Route path="/contact"          element={<Contact />} />
                         <Route path="/user/:userId/*"   element={<UserProfile />}>
                             <Route path="dashboard"         element={<UserProfile />} /> 
+                    
                         </Route>
-        
+                        <Route path="/ExpenseList" element={<ExpenseList />} />
                     </Routes>
                 </Router>
             </UserProvider>
