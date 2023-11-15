@@ -24,6 +24,8 @@ export default (app) => {
             res.json(await Database.getEntries(
                 'expenses', 
                 { 
+                    // id: id ? id : "*",
+                    // user_id: user_id ? user_id : "*",
                     group_id: group_id ? group_id : "*",   
                 }
             ));
