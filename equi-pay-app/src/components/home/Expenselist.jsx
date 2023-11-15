@@ -12,8 +12,11 @@ function NeedToPayFees() {
     const [feesToPay, setFeesToPay] = useState([]);
     const [reloadExpense, setReloadExpense] = useState(true);
     const {userId, groupId} = useParams();
-    const [openedExpense, setOpenedExpense] = useState();
     const [users, setUsers] = useState([]);
+    const [groupName, setGroupName] = useState('');
+    const [groupMembers, setGroupMembers] = useState([]);
+    const [openedExpense, setOpenedExpense] = useState();
+    const [groupDetails, setGroupDetails] = useState({ name: '', members: [] });
     const navigate = useNavigate();
     const addExpense = async (newExpense) => {
         try {
@@ -68,6 +71,19 @@ function NeedToPayFees() {
         })
     }, [reloadExpense, userId]);
 
+    useEffect(() => {
+        authedRequest.get(`/api/groups/${groupId}/details`)
+          .then(res => {
+            console.log('Response from API:', res); // Log the response to inspect its structure
+            if (res && res.data) {
+              setGroupDetails(res.data);
+            }
+          })
+          .catch(err => {
+            console.error('Error fetching group details:', err); // Log the error for debugging
+          });
+      }, [groupId]);
+
     return (
         <div className="container mx-auto mt-5" style={{
             maxHeight: '80vh',
@@ -81,6 +97,13 @@ function NeedToPayFees() {
                 Expenses
                 <CreateExpense addExpense={addExpense}/>
             </h1>
+            <h2>Group Name: {groupDetails.name}</h2>
+      <h3>Group Members:</h3>
+      <ul>
+        {groupDetails.members.map((member) => (
+          <li key={member.id}>{member.displayname}</li>
+        ))}
+      </ul>
             <ul className="space-y-4">
                 {feesToPay.length === 0 && (
                     <Alert severity="warning">No Records</Alert>
@@ -89,7 +112,7 @@ function NeedToPayFees() {
                     <li key={index} className="p-4 rounded-md border border-gray-200">
                         <div className={'flex items-center'}>
                             <div className="w-1/2">
-                                <h2
+                                <h4
                                     onClick={() => {
                                         if (openedExpense !== fee.name) {
                                             setOpenedExpense(fee.name);
@@ -97,7 +120,7 @@ function NeedToPayFees() {
                                             setOpenedExpense(null);
                                         }
                                     }}
-                                    className="text-lg font-semibold underline cursor-pointer">{fee.name}</h2>
+                                    className="text-lg font-semibold underline cursor-pointer">{fee.name}</h4>
                                 <p className="text-gray-600">Date: {fee.created_at}</p>
                             </div>
                             <div className="w-1/2 text-right">
