@@ -4,14 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="30db166e-5127-44fd-8b87-d450cbef362d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../backend/src/data/SQLiteDatabase.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/data/SQLiteDatabase.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/home/CreateGroup.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/home/CreateGroup.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/home/ExpenseDetail.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/home/ExpenseDetail.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/home/Expenselist.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/home/Expenselist.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/home/Groups.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/home/Groups.jsx" afterDir="false" />
-    </list>
+    <list default="true" id="30db166e-5127-44fd-8b87-d450cbef362d" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -66,7 +59,7 @@
       <workItem from="1698554991008" duration="10997000" />
       <workItem from="1699270093266" duration="1380000" />
       <workItem from="1699939621972" duration="3139000" />
-      <workItem from="1700016192584" duration="1170000" />
+      <workItem from="1700016192584" duration="1351000" />
     </task>
     <servers />
   </component>
