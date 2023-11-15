@@ -1,12 +1,15 @@
 
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import React, {useEffect, useState} from "react";
-import {Avatar, List, ListItem, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
+import {Avatar, List, ListItem, ListItemButton, ListItemIcon, ListItemText, TextField, Button} from "@mui/material";
 import {authedRequest} from "../../http";
 function ExpenseDetail({expense}) {
 
 
     const [users, setUsers] = useState([]);
+    const [comment, setComment] = useState('');
+    const [comments, setComments] = useState([]);
+    const [currentuser, setCurrentUser] = useState({});
 
     useEffect(() => {
         if (expense) {
@@ -22,7 +25,18 @@ function ExpenseDetail({expense}) {
 
             })
         }
+
+        
+
     }, [expense]);
+
+
+    const handleAddComment = () => {
+        // Add the comment to the comments array
+        setComments([...comments, comment]);
+        // Reset the comment state
+        setComment("");
+      };
 
 
     return (
@@ -60,6 +74,25 @@ function ExpenseDetail({expense}) {
                     {expense.notes}
                 </pre>
             </div>
+            <div className={"col-span-4 mt-2"}>
+        <h3 className={"font-bold"}>Comments</h3>
+        <TextField
+          id="outlined-multiline-flexible"
+          label="Add a comment"
+          multiline
+          fullWidth
+          maxRows={4}
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+        />
+        <Button variant="contained" color="primary" onClick={handleAddComment}>
+          Add Comment
+        </Button>
+        {/* Display existing comments */}
+        {comments.map((c, index) => (
+          <div key={index}>{c}</div>
+        ))}
+      </div>
         </div>
     )
 }
