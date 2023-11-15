@@ -70,7 +70,7 @@ function NeedToPayFees() {
             setFilteredFees(filteredExpenses);
         }
     };
-        const deleteExpense = async (expenseId) => {
+    const deleteExpense = async (expenseId) => {
         try {
             await authedRequest.delete(`/api/expenses`, { data: { id: expenseId } });
             setReloadExpense(!reloadExpense); // Trigger a re-render to update the list

@@ -11,22 +11,17 @@ function ExpenseDetail({expense}) {
             authedRequest.get(`/api/users/group?group_id=${expense.group_id}`)
                 .then(res => {
                     if (res && res.data) {
-                        const totalBalance = expense.balance;
-                        const creatorShare = totalBalance / res.data.length;
-                        const usersData = res.data.map(user => {
-                            const needPay = user.user_id === expense.creator_id
-                                ? totalBalance - creatorShare
-                                : creatorShare;
-                            return { ...user, needPay };
-                        });
-                        setUsers(usersData);
+                        setUsers(res.data.map(user => {
+                            user.needPay = expense.balance / res.data.length;
+                            return user;
+                        }))
                     }
-                })
-                .catch(err => {
-                    // Handle error
-                });
+                }).catch(err => {
+
+            })
         }
     }, [expense]);
+
     return (
         <div className={'p-4 grid grid-cols-4 gap-2'}>
             <div className={'col-span-1'}>
