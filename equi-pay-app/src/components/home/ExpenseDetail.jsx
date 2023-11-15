@@ -54,6 +54,12 @@ function ExpenseDetail({expense}) {
                     })}
                 </List>
             </div>
+            <div className={'col-span-4 mt-2'}>
+                <h3 className={'font-bold'}>Notes</h3>
+                <pre>
+                    {expense.notes}
+                </pre>
+            </div>
         </div>
     )
 }
