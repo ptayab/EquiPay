@@ -195,7 +195,7 @@ class DatabaseClass {
      * @returns {void}
      */
 
-    async removeEntry(table, obj) {
+    async deleteEntry(table, obj) {
         try {
             // Parse the fields and values needed to locate the item
             const conditions = Object.keys(obj).map((key) => `${key} = ?`).join(' AND ');

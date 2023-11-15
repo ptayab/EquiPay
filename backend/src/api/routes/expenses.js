@@ -61,4 +61,26 @@ export default (app) => {
             res.status(500).json({ message: "Failure to update EXPENSE", error: error });
         }
     });
+
+    route.delete("/", async (req, res) => { 
+        try {
+            const requestData = req.body;
+        
+            // Check if the request data contains an "id" field
+            if (!requestData.id) {
+                return res.status(400).json({ message: "Bad Request: Missing 'id' field in request data" });
+            }
+    
+            // Delete the entry with the specified ID
+            const response = await Database.deleteEntry("expenses", requestData);
+            
+            // Check if the delete was successful
+            if (response) { res.json({ message: "Success" });
+            } else {
+                res.status(404).json({ message: "Not Found: Entry with specified ID not found" });
+            }
+        } catch (error) {
+            res.status(500).json({ message: "Failure to delete EXPENSE", error: error });
+        }
+    });
 }
