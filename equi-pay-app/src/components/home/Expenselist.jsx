@@ -85,89 +85,87 @@ function NeedToPayFees() {
       }, [groupId]);
 
     return (
-        <div className="container mx-auto mt-5" style={{
-            maxHeight: '80vh',
-            overflow: 'auto'
-        }}>
-            <h1 className="text-2xl font-semibold mb-4">
-
-                <IconButton onClick={() => navigate(-1)}>
-                    <ArrowBackIosIcon />
-                </IconButton>
-                Expenses
-                <CreateExpense addExpense={addExpense}/>
-            </h1>
-            <h2>Group Name: {groupDetails.name}</h2>
-      <h3>Group Members:</h3>
-      <ul>
-        {groupDetails.members.map((member) => (
-          <li key={member.id}>{member.displayname}</li>
-        ))}
-      </ul>
-            <ul className="space-y-4">
-                {feesToPay.length === 0 && (
-                    <Alert severity="warning">No Records</Alert>
-                )}
-                {feesToPay.map((fee, index) => (
-                    <li key={index} className="p-4 rounded-md border border-gray-200">
-                        <div className={'flex items-center'}>
-                            <div className="w-1/2">
-                                <h4
-                                    onClick={() => {
-                                        if (openedExpense !== fee.name) {
-                                            setOpenedExpense(fee.name);
-                                        } else {
-                                            setOpenedExpense(null);
-                                        }
-                                    }}
-                                    className="text-lg font-semibold underline cursor-pointer">{fee.name}</h4>
-                                <p className="text-gray-600">Date: {fee.created_at}</p>
-                            </div>
-                            <div className="w-1/2 text-right">
-                                <p className="text-lg font-semibold">${fee.total}</p>
-                                <div className="w-1/2 text-right">
-                                    <Button variant="contained" onClick={() => handleOpenDialog(index)}>
-                                        Settle Up
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
-                        {openedExpense === fee.name && (
-                            <div>
-                                <ExpenseDetail expense={fee}/>
-                            </div>
-                        )}
-                    </li>
+        <div className="container mx-auto mt-5" style={{ maxHeight: '80vh', overflow: 'auto' }}>
+          <h1 className="text-2xl font-semibold mb-4">
+            <IconButton onClick={() => navigate(-1)}>
+              <ArrowBackIosIcon />
+            </IconButton>
+            Expenses
+            <CreateExpense addExpense={addExpense} />
+          </h1>
+    
+          <div className="mb-6">
+            <div style={{ backgroundColor: '#f0f0f0', padding: '20px', borderRadius: '8px', boxShadow: '0 0 5px rgba(0, 0, 0, 0.2)' }}>
+              <h2 className="text-lg font-semibold mb-2">Group Name: {groupDetails.groupName}</h2>
+              <h3 className="text-md font-semibold mb-1">Group Members:</h3>
+              <ul className="pl-4">
+                {groupDetails.members.map((member) => (
+                  <li key={member.id} style={{ listStyleType: 'none', padding: '5px 0', transition: 'background-color 0.3s', cursor: 'pointer' }}>
+                    {member.displayname}
+                  </li>
                 ))}
-                <Dialog onClose={handleCloseDialog} open={open} fullWidth>
-                    <DialogTitle>Settle Up Expense</DialogTitle>
-                    <DialogContent>
-                        <div style={{textAlign: 'center'}}>
-                            <h1>Payment Page</h1>
-                            <TextField
-                                label="Enter the amount to pay"
-                                type="number"
-                                fullWidth
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">$</InputAdornment>
-                                    ),
-                                }}
-                            />
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={() => settleUp(selectedExpenseIndex)}
-                                style={{marginTop: '10px'}}
-                            >
-                                Pay
-                            </Button>
-                        </div>
-                    </DialogContent>
-                </Dialog>
-            </ul>
+              </ul>
+            </div>
+          </div>
+    
+          <ul className="space-y-4">
+            {feesToPay.length === 0 && <Alert severity="warning">No Records</Alert>}
+            {feesToPay.map((fee, index) => (
+              <li key={index} className="p-4 rounded-md border border-gray-200">
+                <div className={'flex items-center'}>
+                  <div className="w-1/2">
+                    <h4
+                      onClick={() => {
+                        if (openedExpense !== fee.name) {
+                          setOpenedExpense(fee.name);
+                        } else {
+                          setOpenedExpense(null);
+                        }
+                      }}
+                      className="text-lg font-semibold underline cursor-pointer"
+                    >
+                      {fee.name}
+                    </h4>
+                    <p className="text-gray-600">Date: {fee.created_at}</p>
+                  </div>
+                  <div className="w-1/2 text-right">
+                    <p className="text-lg font-semibold">${fee.total}</p>
+                    <div className="w-1/2 text-right">
+                      <Button variant="contained" onClick={() => handleOpenDialog(index)}>
+                        Settle Up
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+                {openedExpense === fee.name && (
+                  <div>
+                    <ExpenseDetail expense={fee} />
+                  </div>
+                )}
+              </li>
+            ))}
+            <Dialog onClose={handleCloseDialog} open={open} fullWidth>
+              <DialogTitle>Settle Up Expense</DialogTitle>
+              <DialogContent>
+                <div style={{ textAlign: 'center' }}>
+                  <h1>Payment Page</h1>
+                  <TextField
+                    label="Enter the amount to pay"
+                    type="number"
+                    fullWidth
+                    InputProps={{
+                      startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                    }}
+                  />
+                  <Button variant="contained" color="primary" onClick={() => settleUp(selectedExpenseIndex)} style={{ marginTop: '10px' }}>
+                    Pay
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </ul>
         </div>
-    );
+      );
 }
 
 export default NeedToPayFees;
