@@ -47,12 +47,18 @@ function ExpenseDetail({expense}) {
                                             {user.name?.[0]}
                                         </Avatar>
                                     </ListItemIcon>
-                                    <ListItemText primary={`${user.name} - ${user.needPay}$`}/>
+                                    <ListItemText primary={`${user.name} - ${user.needPay.toFixed(2)}$`}/>
                                 </ListItemButton>
                             </ListItem>
                         )
                     })}
                 </List>
+            </div>
+            <div className={'col-span-4 mt-2'}>
+                <h3 className={'font-bold'}>Notes</h3>
+                <pre>
+                    {expense.notes}
+                </pre>
             </div>
         </div>
     )

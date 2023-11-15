@@ -5,14 +5,16 @@ import ExpenseDetail from "./ExpenseDetail";
 
 import {IconButton, TextField, Dialog, DialogContent, DialogTitle, Button, InputAdornment} from "@mui/material";
 import {authedRequest} from "../../http";
-import {useParams} from "react-router-dom";
-
+import {useNavigate, useParams} from "react-router-dom";
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import {Alert} from "@mui/lab";
 function NeedToPayFees() {
     const [feesToPay, setFeesToPay] = useState([]);
     const [reloadExpense, setReloadExpense] = useState(true);
     const {userId, groupId} = useParams();
     const [openedExpense, setOpenedExpense] = useState();
     const [users, setUsers] = useState([]);
+    const navigate = useNavigate();
     const addExpense = async (newExpense) => {
         try {
             await authedRequest.post(`/api/expenses`, {
@@ -71,10 +73,18 @@ function NeedToPayFees() {
             maxHeight: '80vh',
             overflow: 'auto'
         }}>
-            <h1 className="text-2xl font-semibold mb-4">Expenses
+            <h1 className="text-2xl font-semibold mb-4">
+
+                <IconButton onClick={() => navigate(-1)}>
+                    <ArrowBackIosIcon />
+                </IconButton>
+                Expenses
                 <CreateExpense addExpense={addExpense}/>
             </h1>
             <ul className="space-y-4">
+                {feesToPay.length === 0 && (
+                    <Alert severity="warning">No Records</Alert>
+                )}
                 {feesToPay.map((fee, index) => (
                     <li key={index} className="p-4 rounded-md border border-gray-200">
                         <div className={'flex items-center'}>
