@@ -22,6 +22,26 @@ function ExpenseDetail({expense}) {
 
             })
         }
+<<<<<<< Updated upstream
+=======
+
+        // const userId = expense.user_id;
+        // async function fetchData() {
+        //     try {
+        //         const userData = await fetch.get("users", { id: userId });
+        //         // Handle the user data as needed
+        //         console.log(userData);
+        //     } catch (error) {
+        //         console.error('Error fetching user data:', error);
+        //     }
+        // }
+        
+        // fetchData();
+        
+
+
+
+>>>>>>> Stashed changes
     }, [expense]);
 
 
