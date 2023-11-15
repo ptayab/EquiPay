@@ -8,6 +8,7 @@ import {authedRequest} from "../../http";
 import {useNavigate, useParams} from "react-router-dom";
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import {Alert} from "@mui/lab";
+import DeleteIcon from '@mui/icons-material/Delete';
 function NeedToPayFees() {
     const [feesToPay, setFeesToPay] = useState([]);
     const [reloadExpense, setReloadExpense] = useState(true);
@@ -67,6 +68,16 @@ function NeedToPayFees() {
             console.log(err);
         })
     }, [reloadExpense, userId]);
+    
+    const deleteExpense = async (expenseId) => {
+        try {
+            await authedRequest.delete(`/api/expenses`, { data: { id: expenseId } });
+            setReloadExpense(!reloadExpense); // Trigger a re-render to update the list
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
 
     return (
         <div className="container mx-auto mt-5" style={{
@@ -97,6 +108,7 @@ function NeedToPayFees() {
                                             setOpenedExpense(null);
                                         }
                                     }}
+                                    
                                     className="text-lg font-semibold underline cursor-pointer">{fee.name}</h2>
                                 <p className="text-gray-600">Date: {fee.created_at}</p>
                             </div>
@@ -114,8 +126,17 @@ function NeedToPayFees() {
                                 <ExpenseDetail expense={fee}/>
                             </div>
                         )}
+                <Button 
+                    variant="contained" 
+                    color="secondary" 
+                    startIcon={<DeleteIcon />} 
+                    onClick={() => deleteExpense(fee.id)}
+                    >
+                    Delete
+                    </Button>
                     </li>
                 ))}
+                  
                 <Dialog onClose={handleCloseDialog} open={open} fullWidth>
                     <DialogTitle>Settle Up Expense</DialogTitle>
                     <DialogContent>
