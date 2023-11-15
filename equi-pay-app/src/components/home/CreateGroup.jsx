@@ -10,12 +10,14 @@ function CreateGroupDialog({ onGroupCreated }) {
     const { userId } = useParams();
     const [open, setOpen] = useState(false);
     const [groupName, setGroupName] = useState('');
-    const [selectedUsers, setSelectedUsers] = useState([]);
+    const [selectedUsers, setSelectedUsers] = useState([{id: Number(userId)}]);
     const [users, setUsers] = useState([]);
 
     const handleClickOpen = () => { setOpen(true) };
     const handleClose = () => { setOpen(false) };
     const validationSchema = yup.object({ groupName: yup.string().required('Group Name is required') });
+
+
 
     useEffect(() => {
         const sortData = (list, field) => {
@@ -101,6 +103,7 @@ function CreateGroupDialog({ onGroupCreated }) {
                                 <div key={user.id}>
                                     <input
                                         type="checkbox"
+                                        disabled={user.id === Number(userId)}
                                         checked={selectedUsers.some((selectedUser) => selectedUser.id === user.id)}
                                         onChange={() => handleUserSelection(user)}
                                     />

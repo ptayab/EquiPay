@@ -11,7 +11,7 @@ function Groups({callback}) {
     const [joinedGroups, setJoinedGroups] = useState([]);
     const [selectedItem, setSelectedItem] = useState({id: "", group_id: "", valid: false});
     const navigate = useNavigate();
-
+    const [reloadGroup, setReloadGroup] = useState(true);
     useEffect(() => {
         // to sort the list of users by display name
         const sortData = (list, field) => {
@@ -36,7 +36,7 @@ function Groups({callback}) {
         }
 
         fetchData();
-    }, [userId]);
+    }, [userId, reloadGroup]);
 
     // Navigation to Expense Page when a group is selected
     const onSelected = (item) => {
@@ -48,7 +48,8 @@ function Groups({callback}) {
 
     // To add a new group to the list
     const onNewGroup = (newGroup) => {
-        setJoinedGroups([...joinedGroups, newGroup]);
+        setReloadGroup(!reloadGroup)
+        // setJoinedGroups([...joinedGroups, newGroup]);
     };
 
     return (
@@ -64,10 +65,7 @@ function Groups({callback}) {
                               flex items-center p-4 rounded-lg shadow-md
                               ${group.id === selectedItem.id ? "bg-blue-100 hover:bg-blue-200" : "bg-white hover:bg-blue-50"}`}
                         onClick={() => onSelected({id: group.id, group_id: group.group_id, valid: false})}>
-                        <div
-                            className={`rounded-full h-8 w-8 flex items-center justify-center mr-4bg-blue-500 text-white`}>
-                            {group && group.name ? group.name : 'No Name Available'}
-                        </div>
+
                         <div>
                             <h2 className="text-lg font-semibold">
                                 {group && group.name ? group.name : 'No Name Available'}
