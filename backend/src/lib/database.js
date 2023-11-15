@@ -1,12 +1,10 @@
 import sqlite from 'better-sqlite3';
 import fs from "fs";
 
-
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import DBConfig from "./db.config.js"
-
 
 // Name of the actual file
 const DataBase_Name = 'SQLiteDatabase.sqlite3';
@@ -24,13 +22,14 @@ class DatabaseClass {
         }
         if(!this.database) console.error()
     }
+
     async createLog(message, obj){
         try {
             if (obj.hasOwnProperty('log')) return;
             const logEntry = `${message} - ${JSON.stringify(obj)}`
             this.insertEntry("logs", {log: logEntry})
         } catch (err) {
-            console.log(`createLog: Unable to create log file.`,err);
+            console.error(`createLog: Unable to create log file.`,err);
         }
     }
 
@@ -47,9 +46,11 @@ class DatabaseClass {
             const sql = `SELECT * FROM ${table}` 
             // Runs SQL Query on the DB                           
             const entries = this.database.prepare(sql).all();
-            return entries || {}
+            return entries || []
         } catch (err) {
-            console.log(`getTable: Unable to retrieve table ${table}.`,err);
+            console.log(`getTable Error: Unable to retrieve table ${table}.`);
+            console.log( err );
+            return []
         }
     }
 
@@ -71,7 +72,10 @@ class DatabaseClass {
             const data = await this.getEntries(table, obj)
             return (Array.isArray(data)) ? data[data.length - 1]: data
         } catch (err) {
-            console.error(`getEntry: Table "${table}" issue. Unable to retrieve match for this obj =>`, obj, err);
+            console.error(`getEntry Error: Problem getting item from table "${table}".`);
+            console.error(`Unable to retrieve match for this obj =>`, obj);
+            console.error(err)
+            return {}
         }
     }
 
@@ -88,7 +92,10 @@ class DatabaseClass {
      */
 
     async getEntries(table, obj, joinConditions = [] ) {
+        console.log("DEBUG_GetEntries:",table, obj, joinConditions)
         try {
+            if(!table || !obj) console.error("GetEnties: Missing Parameters")
+            
             // Map the keys and values
             const fields = Object.keys(obj);
             const values = Object.values(obj);
@@ -97,7 +104,8 @@ class DatabaseClass {
                 if (typeof values[index] === 'string' && values[index].includes('*')) {
                     return `${field} LIKE ?`;
                 } else {
-                    return `${field} = ?`;
+                    // Use the table alias in the condition
+                    return `${field.replace('user_groups.', '')} = ?`;
                 }
             });
 
@@ -112,14 +120,15 @@ class DatabaseClass {
 
             // Create SQL Query with joins
             const sql = `SELECT * FROM ${table} ${joinClauses.join(' ')} WHERE ${conditions.join(' AND ')}`;
-            console.log(sql)
+            // console.log("DEBUG_SQL", sql)
             // Run SQL Query on the DB  
-            const entries = this.database.prepare(sql).all(sanitizedValues);
-
+            const entries = this.database.prepare(sql).all(...sanitizedValues);
             //Returns The Entry, or returns empty if not found
             return entries || []
         } catch (error) {
-            console.log(`getEntries: Table "${table}" issue. Unable to retrieve matching entries for this obj =>`, obj, error);
+            console.error(`getEntries Error: Problem getting item from table "${table}".`);
+            console.error(`Unable to retrieve match for this obj =>`, obj);
+            console.error(err)
             return [];
         }
     }
@@ -139,24 +148,27 @@ class DatabaseClass {
      */
     async insertEntry(table, obj) {
         try {
+            
             // Map the keys and values
             const columns = Object.keys(obj);
             const placeholders = columns.map(() => '?').join(',');
             const values = Object.values(obj);
-
+           
             // Error Check to make sure there are valid Colums
             const validColumns = columns.filter(column => {
                 const columnInfo = this.database.pragma(`table_info(${table})`)
                 const columnInfoSorted = columnInfo.filter((info ) => info.name === column)[0];
+                if(!columnInfoSorted) console.error(`insertEntry Note: The field "${column}" does not exist on the table ${table}`)
                 return !!columnInfoSorted;
             });
+
 
             if (validColumns.length === 0)  throw new Error(`Invalid columns: ${columns.join(',')}`); 
             const fields = validColumns.join(',');
 
             // Create SQL Query
             const sql = `INSERT INTO ${table} (${fields}) VALUES (${placeholders})`;
-
+           
             // Run SQL Query on the DB  
             this.database.prepare(sql).run(...values);
 
@@ -168,7 +180,9 @@ class DatabaseClass {
             return generatedObj.id
 
         } catch (err) {
-            console.log(`insertEntry: Table "${table}" issue. Unable to insert data: ${JSON.stringify(obj)}`, err);
+            console.log(`insertEntry: Problem with table "${table}". Unable to insert data:`)
+            console.error(`Object -> ${JSON.stringify(obj)}`);
+            console.error(err);
         }
     }
 
@@ -181,20 +195,23 @@ class DatabaseClass {
      * @returns {void}
      */
 
-    async removeEntry(table, obj){
+    async removeEntry(table, obj) {
         try {
             // Parse the fields and values needed to locate the item
             const conditions = Object.keys(obj).map((key) => `${key} = ?`).join(' AND ');
-            const values = Object.values(condition);
-
-            // Run SQL Query de the DB  
+            const values = Object.values(obj);
+    
+            // Run SQL Query on the DB
             const sql = `DELETE FROM ${table} WHERE ${conditions}`;
 
-            // Run SQL Query on the DB  
+            // Run SQL Query on the DB
             this.database.prepare(sql).run(...values);
-            
+            return true;
         } catch (err) {
-            console.log(`removeEntry: Table "${table}" issue. Unable to remove entry with condition: ${JSON.stringify(condition)}`, err);
+            console.log(`removeEntry: Table "${table}" issue.`);
+            console.error(`Unable to remove entry with condition: ${JSON.stringify(obj)}`)
+            console.error(err);
+            return false;
         }
     }
 
@@ -210,15 +227,16 @@ class DatabaseClass {
      */
     async updateEntry(table, obj) {
         try {
+            
             // Error if there is an issue
             if (!obj.hasOwnProperty('id')) {
                 console.log(`updateEntry: Table "${table}" issue. Unable to update entry: ${JSON.stringify(obj)}`);
                 return false;
             }
-    
+
             // Extract the ID from the object
             const id = obj.id;
-    
+            
             // Parse Columns
             const columns = Object.keys(obj);
             const validColumns = columns.filter(column => {
@@ -236,11 +254,14 @@ class DatabaseClass {
     
             // Prepare and run the update query
             const sql = `UPDATE ${table} SET ${setClause} WHERE id = ?`;
+            console.log("DEBUG:",sql)
             this.database.prepare(sql).run(...Object.values(obj), id);
+
             this.createLog(`Entry updated in ${table}`, obj);
             return true;
         } catch (error) {
-            console.log(`updateEntry: Table "${table}" issue. Unable to update entry: ${JSON.stringify(obj)}`, error);
+            console.log(`updateEntry: Table "${table}" issue. Unable to update entry: ${JSON.stringify(obj)}`);
+            console.error(err);
             return false;
         }
     }
@@ -260,7 +281,8 @@ class DatabaseClass {
             const dups = await this.getEntries(table,obj);
             return dups.length !== 0;
         } catch (err) {
-            console.log(`checkForDuplicate: Table "${table}" issue. Unable to get data: ${JSON.stringify(obj)}`, err);
+            console.log(`checkForDuplicate: Table "${table}" issue. Unable to get data: ${JSON.stringify(obj)}`);
+            console.error(err);
         }
     }
 
@@ -277,9 +299,11 @@ class DatabaseClass {
             const db = new sqlite(dbPath);
             db.exec('PRAGMA foreign_keys = ON;', (err) => { if (err) console.error('Error enabling foreign key support:', err)});
             for (const table of DBConfig.tables) db.exec(table.sql);
+            this.report(db)
             return db;
         } catch (err) {
-            console.log(`createTablesFromConfig: Unable to initialize tables ${JSON.stringify()}`, err);
+            console.log(`createTablesFromConfig: Unable to initialize tables ${JSON.stringify()}`);
+            console.error(err);
         }
     }
     
@@ -303,6 +327,7 @@ class DatabaseClass {
      * @param {JSON} database 
      */
     report(database) {
+        console.log("-- Database Schema Report --")
         const db = !database ? this.database : database;
         const tablesSQL = "SELECT name FROM sqlite_master WHERE type='table'"
         const tables = db.prepare(tablesSQL).all();

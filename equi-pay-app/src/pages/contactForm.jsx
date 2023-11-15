@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ContactForm = () => {
+const Contact = () => {
   const containerStyles = {
     display: 'flex',
     flexDirection: 'column',
@@ -31,7 +31,7 @@ const ContactForm = () => {
     fontFamily: 'Arial, sans-serif', // Change the font family
     backgroundColor: 'silver', // Add a background color
     padding: '10px', // Add padding to highlight
-    borderRadius: '5px',
+    width: "100%"
   };
 
   const inputStyles = {
@@ -57,9 +57,14 @@ const ContactForm = () => {
       <div>
       <h1 style={headerStyles}>Contact Us</h1>
           
-          <h4 style={descStyles} id="Disc">
-            Thank you for using EquiPay, the website is still in its early stages. Feedback on bugs and ways we could improve are greatly appreciated.
-          </h4>
+      <h4 style={descStyles} id="Disc">
+            Thank you for using EquiPay, the website is still in its early stages.
+      </h4>
+
+      <h4 style={descStyles} id="Disc">
+          Feedback on bugs and ways we could improve are greatly appreciated.
+      </h4>
+
       </div>
 
       <div style={formStyles} id="contactusform">
@@ -75,4 +80,4 @@ const ContactForm = () => {
   );
 };
 
-export default ContactForm;
+export default Contact;

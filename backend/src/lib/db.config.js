@@ -6,9 +6,7 @@ const DatabaseConfig = {
                 CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     name TEXT,
-                    displayname TEXT,
-                    group_id INTEGER,
-                    FOREIGN KEY (group_id) REFERENCES users(id)                 
+                    displayname TEXT
                 );
             `
         },
@@ -17,11 +15,7 @@ const DatabaseConfig = {
             sql: `
                 CREATE TABLE IF NOT EXISTS groups (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    groupname TEXT,
-                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    user_id INTEGER,
-                    FOREIGN KEY (user_id) REFERENCES users(id) 
+                    name TEXT
                 );
             `
         },
@@ -29,11 +23,11 @@ const DatabaseConfig = {
             name: "user_groups",
             sql: `
                 CREATE TABLE IF NOT EXISTS user_groups (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
                     user_id INTEGER,
                     group_id INTEGER,
                     FOREIGN KEY (user_id) REFERENCES users(id),
-                    FOREIGN KEY (group_id) REFERENCES groups(groupid),
-                    PRIMARY KEY (user_id, group_id)
+                    FOREIGN KEY (group_id) REFERENCES groups(id)
                 );
             `
         },
@@ -42,16 +36,15 @@ const DatabaseConfig = {
             sql: `
                 CREATE TABLE IF NOT EXISTS expenses (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    totalamount REAL,
+                    name TEXT,
+                    notes TEXT,
+                    total REAL,
                     balance REAL,
-                    amountowed REAL,
                     user_id INTEGER,
                     group_id INTEGER,
-                    description TEXT,
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                     FOREIGN KEY (user_id) REFERENCES users(id),
-                    FOREIGN KEY (group_id) REFERENCES groups(groupid)
+                    FOREIGN KEY (group_id) REFERENCES groups(id)
                 );
             `
         },

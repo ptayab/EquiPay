@@ -1,3 +1,52 @@
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+
+// Context 
+import { UserProvider } from "./context/profile.hook"
+
+// Component
+import Header from './components/common/Header';
+
+
+// Page Routes
+import UserList from './pages/UserList';
+import Login from './pages/login';
+import Register from './pages/register';
+import UserProfile from './pages/UserProfile';
+import Contact from './pages/contactForm';
+
+//
+import ExpenseList from './components/home/Expenselist.jsx';
+
+
+function App() {
+    return (
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+            {/* Provides Global User State Context */}
+            <UserProvider>
+                <Router>
+                    <Header />
+
+                    <Routes>               
+                        {/* Route for User List (Displayed on the first page) */}
+                        <Route path="/"                 element={<UserList />} />
+                        <Route path="/login"            element={<Login />} />
+                        <Route path="/register"         element={<Register />} />
+                        <Route path="/contact"          element={<Contact />} />
+                        <Route path="/user/:userId/*"   element={<UserProfile />}>
+                            <Route path="dashboard"         element={<UserProfile />} />
+                        </Route>
+                        <Route path="/user/:userId/expenseList/group/:groupId" element={<ExpenseList />} />
+                    </Routes>
+                </Router>
+            </UserProvider>
+        </LocalizationProvider>
+    );
+}
+export default App;
+
 // import React from 'react';
 // import {BrowserRouter as Router, Route, Routes, Link} from 'react-router-dom';
 // import Login from './login';
@@ -69,43 +118,3 @@
 // }
 
 // export default App;
-
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Login from './login';
-import Register from './register';
-import UserProfile from './UserProfile';
-import Header from './common/Header';
-import UserList from './UserList';
-import Home from './home/home';
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import ContactForm from './home/contactForm';
-
-function App() {
-  return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Router>
-        <Header />
-        <Routes>
-          {/* Route for User List (Displayed on the first page) */}
-          <Route path="/" element={<UserList />} />
-
-          <Route path="/user/:userId/*" element={<UserProfile />}>
-            {/* Nested route for the User Dashboard */}
-            <Route path="dashboard" element={<Home />} />
-          </Route>
-
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/contact" element={<ContactForm />} />
-
-          {/* Add more routes for other components as needed */}
-        </Routes>
-      </Router>
-    </LocalizationProvider>
-  );
-}
-
-export default App;
-
