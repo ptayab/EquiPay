@@ -8,7 +8,7 @@ import * as fetch from "./../../lib/fetch"
 import { useParams } from 'react-router-dom';
 
 function Friends({callback}) {
-    const {  profileStatus, setProfileStatus  } = callback;
+    const {  profileStatus, setProfileStatus } = callback;
     const [friends, setFriends] = useState([]);
     const { userId } = useParams();
     
@@ -34,7 +34,7 @@ function Friends({callback}) {
                 }
             }
             fetchData();
-        }, []);
+        }, [userId]);
 
     // const friends = [
     //     { name: 'Friend 1', needPay: 12 },
@@ -45,7 +45,7 @@ function Friends({callback}) {
         const [entryData, setEntryData] = useState(profile);
         
         useEffect(() => {
-            console.log(profile)
+
             async function fetchData() {
                 try {
                     const data = await fetch.get("expenses", { user_id: profile.id, group_id:profileStatus.group });
