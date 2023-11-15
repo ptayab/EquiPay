@@ -144,3 +144,4 @@ dist
 # End of https://www.toptal.com/developers/gitignore/api/node
 equi-pay-app/.idea/inspectionProfiles/Project_Default.xml
 equi-pay-app/.idea/vcs.xml
+*.sqlite3
