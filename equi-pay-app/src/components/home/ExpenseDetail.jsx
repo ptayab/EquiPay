@@ -1,94 +1,91 @@
-
 import ReceiptIcon from '@mui/icons-material/Receipt';
-import React, {useEffect, useState} from "react";
-import {Avatar, List, ListItem, ListItemButton, ListItemIcon, ListItemText, TextField, Button} from "@mui/material";
-import {authedRequest} from "../../http";
-function ExpenseDetail({expense}) {
+import React, { useEffect, useState } from "react";
+import { Avatar, List, ListItem, ListItemButton, ListItemIcon, ListItemText, TextField, Button } from "@mui/material";
+import { authedRequest } from "../../http";
 
+function ExpenseDetail({ expense }) {
+  const [users, setUsers] = useState([]);
+  const [comment, setComment] = useState('');
+  const [comments, setComments] = useState([]);
+  const [currentuser, setCurrentUser] = useState({});
 
-    const [users, setUsers] = useState([]);
-    const [comment, setComment] = useState('');
-    const [comments, setComments] = useState([]);
-    const [currentuser, setCurrentUser] = useState({});
-
-    useEffect(() => {
-        if (expense) {
-            authedRequest.get(`/api/users/group?group_id=${expense.group_id}`)
+  useEffect(() => {
+    if (expense) {
+      authedRequest.get(`/api/users/group?group_id=${expense.group_id}`)
+        .then(res => {
+          if (res && res.data) {
+            setUsers(res.data.map(user => {
+              user.needPay = expense.balance / res.data.length;
+              return user;
+            }));
+            const userWithExpense = res.data.find(user => user.user_id === expense.user_id);
+            if (userWithExpense) {
+              authedRequest.get(`/api/users/${expense.user_id}`)
                 .then(res => {
-                    if (res && res.data) {
-                        setUsers(res.data.map(user => {
-                            user.needPay = expense.balance / res.data.length;
-                            return user;
-                        }))
-                    }
+                  if (res && res.data) {
+                    setCurrentUser(res.data);
+                  }
                 }).catch(err => {
+                  // Handle error
+                });
+            }
+          }
+        }).catch(err => {
+          // Handle error
+        });
+    }
+  }, [expense]);
 
-            })
-        }
+  const handleAddComment = () => {
+    // Add the comment to the comments array
+    setComments([...comments, comment]);
+    // Reset the comment state
+    setComment("");
+  };
 
-        // const userId = expense.user_id;
-        // async function fetchData() {
-        //     try {
-        //         const userData = await fetch.get("users", { id: userId });
-        //         // Handle the user data as needed
-        //         console.log(userData);
-        //     } catch (error) {
-        //         console.error('Error fetching user data:', error);
-        //     }
-        // }
-        
-        // fetchData();
-        
+  const handleRemindMe = (userId) => {
+    // Add your logic for the "Remind Me" functionality here
+    console.log(`Remind Me for user with ID: ${userId}`);
+  };
 
-
-
-    }, [expense]);
-
-
-    const handleAddComment = () => {
-        // Add the comment to the comments array
-        setComments([...comments, comment]);
-        // Reset the comment state
-        setComment("");
-      };
-
-
-    return (
-        <div className={'p-4 grid grid-cols-4 gap-2'}>
-            <div className={'col-span-1'}>
-                <ReceiptIcon style={{
-                    fontSize: '150px',
-                    color: '#99e0c5'
-                }}/>
-            </div>
-            <div className={'grid col-span-3'}>
-                <h1 className={'text-xl'}>
-                    {expense.name} - ${expense.total}
-                </h1>
-                <List>
-                    {users.map(user => {
-                        return (
-                            <ListItem key={user.user_id}>
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        <Avatar >
-                                            {user.name?.[0]}
-                                        </Avatar>
-                                    </ListItemIcon>
-                                    <ListItemText primary={`${user.name} - ${user.needPay.toFixed(2)}$`}/>
-                                </ListItemButton>
-                            </ListItem>
-                        )
-                    })}
-                </List>
-            </div>
-            <div className={'col-span-4 mt-2'}>
-                <h3 className={'font-bold'}>Notes</h3>
-                <pre>
-                    {expense.notes}
-                </pre>
-            </div>
-            <div className={"col-span-4 mt-2"}>
+  return (
+    <div className={'p-4 grid grid-cols-4 gap-2'}>
+      <div className={'col-span-1'}>
+        <ReceiptIcon style={{
+          fontSize: '150px',
+          color: '#99e0c5'
+        }} />
+      </div>
+      <div className={'grid col-span-3'}>
+        <h1 className={'text-xl'}>
+          {expense.name} - ${expense.total}
+        </h1>
+        <List>
+          {users.map(user => (
+            <ListItem key={user.user_id}>
+              <ListItemButton>
+                {/* "Remind Me" button */}
+                <Button variant="outlined" color="primary" onClick={() => handleRemindMe(user.user_id)}>
+                    🔔
+                </Button>
+                <ListItemIcon>
+                  <Avatar>
+                    {user.name?.[0]}
+                  </Avatar>
+                </ListItemIcon>
+                <ListItemText primary={`${user.name} - ${user.needPay.toFixed(2)}$`} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      </div>
+      <div className={'col-span-4 mt-2'}>
+        <h3 className={'font-bold'}>Notes</h3>
+        <pre>
+          {expense.notes}
+        </pre>
+      </div>
+      <div className={"col-span-4 mt-2"}>
         <h3 className={"font-bold"}>Comments</h3>
         <TextField
           id="outlined-multiline-flexible"
@@ -107,7 +104,8 @@ function ExpenseDetail({expense}) {
           <div key={index}>{c}</div>
         ))}
       </div>
-        </div>
-    )
+    </div>
+  );
 }
+
 export default ExpenseDetail;
