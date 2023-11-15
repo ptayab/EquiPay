@@ -95,19 +95,6 @@ function NeedToPayFees() {
           });
       }, [groupId]);
 
-    useEffect(() => {
-        authedRequest.get(`/api/groups/${groupId}/details`)
-          .then(res => {
-            console.log('Response from API:', res); // Log the response to inspect its structure
-            if (res && res.data) {
-              setGroupDetails(res.data);
-            }
-          })
-          .catch(err => {
-            console.error('Error fetching group details:', err); // Log the error for debugging
-          });
-      }, [groupId]);
-
     return (
         <div className="container mx-auto mt-5" style={{ maxHeight: '80vh', overflow: 'auto' }}>
           <h1 className="text-2xl font-semibold mb-4">
