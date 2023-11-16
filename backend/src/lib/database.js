@@ -128,7 +128,7 @@ class DatabaseClass {
         } catch (error) {
             console.error(`getEntries Error: Problem getting item from table "${table}".`);
             console.error(`Unable to retrieve match for this obj =>`, obj);
-            console.error(err)
+            console.error(error)
             return [];
         }
     }

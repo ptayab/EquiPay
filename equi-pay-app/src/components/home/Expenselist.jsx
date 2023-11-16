@@ -5,16 +5,14 @@ import ExpenseDetail from "./ExpenseDetail";
 
 import {IconButton, TextField, Dialog, DialogContent, DialogTitle, Button, InputAdornment} from "@mui/material";
 import {authedRequest} from "../../http";
-import {useNavigate, useParams} from "react-router-dom";
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import {Alert} from "@mui/lab";
+import {useParams} from "react-router-dom";
+
 function NeedToPayFees() {
     const [feesToPay, setFeesToPay] = useState([]);
     const [reloadExpense, setReloadExpense] = useState(true);
     const {userId, groupId} = useParams();
     const [openedExpense, setOpenedExpense] = useState();
     const [users, setUsers] = useState([]);
-    const navigate = useNavigate();
     const addExpense = async (newExpense) => {
         try {
             await authedRequest.post(`/api/expenses`, {
@@ -33,6 +31,8 @@ function NeedToPayFees() {
     };
     const [open, setOpen] = useState(false);
     const [selectedExpenseIndex, setSelectedExpenseIndex] = useState(null);
+    const [paymentAmount, setPaymentAmount] = useState(0); // State to track the payment amount
+
 
     const handleOpenDialog = (index) => {
         setSelectedExpenseIndex(index);
@@ -41,20 +41,36 @@ function NeedToPayFees() {
 
     const handleCloseDialog = () => {
         setOpen(false);
+        
+    
     };
 
-    const settleUp = (index) => {
-        // Create a copy of the feesToPay array
-        const updatedFeesToPay = [...feesToPay];
+    const settleUp = async (index) => {
+        try {
+          const expenseToPay = feesToPay[index];
+          const response = await authedRequest.post('/api/expenses/pay', {
+            expense_id: expenseToPay.id,
+            user_id: userId,
+            amount: paymentAmount
+          });
+    
+            if (response.data.message === 'Payment successful') {
+                // Update local state to reflect the changes
+                const updatedFeesToPay = [...feesToPay];
+                updatedFeesToPay.splice(index, 1);
+                setFeesToPay(updatedFeesToPay);
+                handleCloseDialog();
+                setPaymentAmount(0); // Reset payment amount
+                setReloadExpense(!reloadExpense); // Trigger a reload if necessary
+            }
 
-        // Remove the expense at the specified index
-        updatedFeesToPay.splice(index, 1);
-
-        // Update the state to reflect the changes
-        setFeesToPay(updatedFeesToPay);
-
-        // Close the dialog
-        handleCloseDialog();
+            handleCloseDialog();
+        } catch (error) {
+            console.error('Error making payment:', error.response ? error.response.data : error.message);
+            // Handle error, show error message, etc.
+        }finally {
+            setPaymentAmount(0); // Reset payment amount regardless of success or failure
+        }
     };
 
     useEffect(() => {
@@ -73,18 +89,10 @@ function NeedToPayFees() {
             maxHeight: '80vh',
             overflow: 'auto'
         }}>
-            <h1 className="text-2xl font-semibold mb-4">
-
-                <IconButton onClick={() => navigate(-1)}>
-                    <ArrowBackIosIcon />
-                </IconButton>
-                Expenses
+            <h1 className="text-2xl font-semibold mb-4">Expenses
                 <CreateExpense addExpense={addExpense}/>
             </h1>
             <ul className="space-y-4">
-                {feesToPay.length === 0 && (
-                    <Alert severity="warning">No Records</Alert>
-                )}
                 {feesToPay.map((fee, index) => (
                     <li key={index} className="p-4 rounded-md border border-gray-200">
                         <div className={'flex items-center'}>
@@ -111,13 +119,13 @@ function NeedToPayFees() {
                         </div>
                         {openedExpense === fee.name && (
                             <div>
-                                <ExpenseDetail expense={fee}/>
+                                <ExpenseDetail expense={fee} userId={userId} />
                             </div>
                         )}
                     </li>
                 ))}
                 <Dialog onClose={handleCloseDialog} open={open} fullWidth>
-                    <DialogTitle>Settle Up Expense</DialogTitle>
+                    <DialogTitle>Settle Up </DialogTitle>
                     <DialogContent>
                         <div style={{textAlign: 'center'}}>
                             <h1>Payment Page</h1>
@@ -130,6 +138,9 @@ function NeedToPayFees() {
                                         <InputAdornment position="start">$</InputAdornment>
                                     ),
                                 }}
+                                value={paymentAmount}
+                                onChange={(e) => setPaymentAmount(parseFloat(e.target.value))}
+                          
                             />
                             <Button
                                 variant="contained"

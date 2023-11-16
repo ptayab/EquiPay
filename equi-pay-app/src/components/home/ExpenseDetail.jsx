@@ -3,26 +3,29 @@ import ReceiptIcon from '@mui/icons-material/Receipt';
 import React, {useEffect, useState} from "react";
 import {Avatar, List, ListItem, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
 import {authedRequest} from "../../http";
-function ExpenseDetail({expense}) {
+function ExpenseDetail({expense,userId}) {
 
 
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
-        if (expense) {
+        if (expense && userId) { // Make sure userId is available
             authedRequest.get(`/api/users/group?group_id=${expense.group_id}`)
                 .then(res => {
                     if (res && res.data) {
-                        setUsers(res.data.map(user => {
-                            user.needPay = expense.balance / res.data.length;
-                            return user;
-                        }))
+                        // Filter users to include only the logged-in user
+                        const loggedInUser = res.data.find(user => user.user_id === userId);
+    
+                        if (loggedInUser) {
+                            loggedInUser.needPay = expense.balance / res.data.length;
+                            setUsers([loggedInUser]);
+                        }
                     }
                 }).catch(err => {
-
-            })
+                    // Handle error
+                });
         }
-    }, [expense]);
+    }, [expense, userId]); // Include userId in the dependency array
 
 
     return (
