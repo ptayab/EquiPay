@@ -1,4 +1,3 @@
-
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import React, {useEffect, useState} from "react";
 import {Avatar, List, ListItem, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
@@ -63,4 +62,5 @@ function ExpenseDetail({expense}) {
         </div>
     )
 }
+
 export default ExpenseDetail;
