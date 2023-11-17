@@ -37,11 +37,17 @@ export default (app) => {
             // Parse Post Body
             const { name, members } = req.body;
             if( !name || !members) return res.status(500).json({ message: "Missing Needed Fields" });
+
+            // // Assuming the user creating the group is the owner (you may need to get the user_id from the authentication token)
+            // const owner_id = req.user.id;
             // Create Group and initialize, returns the entry ID
             const group_id = await Database.insertEntry(
                     "groups",
-                    { name: name } 
+                    { name: name
+                    // owner_id: owner_id
+                 } 
                 );
+                console.log("Group created with ID:", group_id);
 
             members.forEach(async member => {
                 console.log(member, group_id)

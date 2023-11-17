@@ -13,6 +13,11 @@ function NeedToPayFees() {
     const {userId, groupId} = useParams();
     const [openedExpense, setOpenedExpense] = useState();
     const [users, setUsers] = useState([]);
+    const [errorMessage, setErrorMessage] = useState(''); // New state for error message
+   
+    const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+
+
     const addExpense = async (newExpense) => {
         try {
             await authedRequest.post(`/api/expenses`, {
@@ -48,6 +53,19 @@ function NeedToPayFees() {
     const settleUp = async (index) => {
         try {
           const expenseToPay = feesToPay[index];
+
+          // Check if the payment amount is greater than the owing balance
+            if (paymentAmount > expenseToPay.balance) {
+                // Show an error message or handle it as needed
+                setErrorMessage(
+                    <>
+                      <div>Payment amount exceeds owing balance.</div>
+                      <div>Owing balance: ${expenseToPay.balance.toFixed(2)}.</div>
+                      <div>Please retry.</div>
+                    </>); return;
+            }
+
+      
           const response = await authedRequest.post('/api/expenses/pay', {
             expense_id: expenseToPay.id,
             user_id: userId,
@@ -62,6 +80,14 @@ function NeedToPayFees() {
                 handleCloseDialog();
                 setPaymentAmount(0); // Reset payment amount
                 setReloadExpense(!reloadExpense); // Trigger a reload if necessary
+
+                // Reset error message
+                setErrorMessage('');
+
+                // Show the success dialog
+                setShowSuccessDialog(true);
+
+                
             }
 
             handleCloseDialog();
@@ -77,6 +103,7 @@ function NeedToPayFees() {
         authedRequest.get(`/api/expenses?user_id=${userId}&group_id=${groupId}`)
             .then(res => {
                 if (res && res.data) {
+                    console.log('Expense data:', res.data); 
                     setFeesToPay(res.data)
                 }
             }).catch(err => {
@@ -109,11 +136,14 @@ function NeedToPayFees() {
                                 <p className="text-gray-600">Date: {fee.created_at}</p>
                             </div>
                             <div className="w-1/2 text-right">
-                                <p className="text-lg font-semibold">${fee.total}</p>
+                                <p className="text-lg font-semibold">${fee.balance}</p>
                                 <div className="w-1/2 text-right">
-                                    <Button variant="contained" onClick={() => handleOpenDialog(index)}>
-                                        Settle Up
-                                    </Button>
+                                   
+                                   {fee.balance >0 && ( // Check if the user is not the creator
+                                        <Button variant="contained" onClick={() => handleOpenDialog(index)}>
+                                            Settle Up
+                                        </Button>
+                                        )}
                                 </div>
                             </div>
                         </div>
@@ -129,6 +159,12 @@ function NeedToPayFees() {
                     <DialogContent>
                         <div style={{textAlign: 'center'}}>
                             <h1>Payment Page</h1>
+                            
+
+                            {/* Display error message if exists */}
+                            {errorMessage && (
+                            <p style={{ color: 'red', marginBottom: '10px' }}>{errorMessage}</p>
+                            )}
                             <TextField
                                 label="Enter the amount to pay"
                                 type="number"
@@ -151,6 +187,24 @@ function NeedToPayFees() {
                                 Pay
                             </Button>
                         </div>
+                    </DialogContent>
+                </Dialog>
+
+                {/* Success Dialog */}
+                <Dialog onClose={() => setShowSuccessDialog(false)} open={showSuccessDialog} fullWidth>
+                    <DialogTitle>Payment Successful</DialogTitle>
+                    <DialogContent>
+                    <div style={{ textAlign: 'center' }}>
+                        <p>Your payment was successful!</p>
+                        <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => setShowSuccessDialog(false)}
+                        style={{ marginTop: '10px' }}
+                        >
+                        OK
+                        </Button>
+                    </div>
                     </DialogContent>
                 </Dialog>
             </ul>

@@ -15,7 +15,8 @@ const DatabaseConfig = {
             sql: `
                 CREATE TABLE IF NOT EXISTS groups (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name TEXT
+                    name TEXT,
+                    
                 );
             `
         },
