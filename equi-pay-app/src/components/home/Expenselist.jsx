@@ -4,12 +4,14 @@ import CreateExpense from "./CreateExpense";
 import ExpenseDetail from "./ExpenseDetail";
 import { IconButton, TextField, Dialog, DialogContent, DialogTitle, Button, InputAdornment } from "@mui/material";
 import { authedRequest } from "../../http";
-import { useNavigate, useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
 import { Alert } from "@mui/lab";
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
 
+import { useNavigate } from 'react-router-dom';
 function NeedToPayFees() {
+    const navigate = useNavigate();
     const [feesToPay, setFeesToPay] = useState([]);
     const [reloadExpense, setReloadExpense] = useState(true);
     const { userId, groupId } = useParams();
