@@ -26,6 +26,9 @@ function Header() {
         <li>
           <Link to="/register">Register</Link> 
         </li>
+        <li>
+          <Link to="/history">History</Link> 
+        </li>
       </ul>
       <h1>Equipay</h1>
     </nav>
