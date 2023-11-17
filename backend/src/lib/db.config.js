@@ -50,6 +50,22 @@ const DatabaseConfig = {
             `
         },
         {
+            name: "comments",
+            sql: `
+                CREATE TABLE IF NOT EXISTS expenses (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    comment TEXT,
+                    expense_id INTEGER,
+                    user_id INTEGER,
+                    group_id INTEGER,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users(id),
+                    FOREIGN KEY (group_id) REFERENCES groups(id),
+                    FOREIGN KEY (expense_id) REFERENCES expenses(id)
+                );
+            `
+        },
+        {
             name: "logs",
             sql: `
                 CREATE TABLE IF NOT EXISTS logs (

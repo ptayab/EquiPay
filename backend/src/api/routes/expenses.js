@@ -13,7 +13,7 @@ export default (app) => {
     */
 
 
-    // GET ALL EXPENSES 
+    // GET ALL EXPENSES
     //      or
     //  'id' as a query
     // you can use any combination of the quiries to filter your request
@@ -34,7 +34,7 @@ export default (app) => {
         }
     });
 
-    route.post("/", async (req, res) => { 
+    route.post("/", async (req, res) => {
         try {
             // Parse Post Body
             const requestData = req.body;
@@ -72,7 +72,7 @@ export default (app) => {
         }
     });
 
-    route.put("/", async (req, res) => { 
+    route.put("/", async (req, res) => {
         try {
             // Parse Post Body
             const requestData = req.body;
@@ -84,18 +84,18 @@ export default (app) => {
         }
     });
 
-    route.delete("/", async (req, res) => { 
+    route.delete("/", async (req, res) => {
         try {
             const requestData = req.body;
-        
+
             // Check if the request data contains an "id" field
             if (!requestData.id) {
                 return res.status(400).json({ message: "Bad Request: Missing 'id' field in request data" });
             }
-    
+
             // Delete the entry with the specified ID
             const response = await Database.deleteEntry("expenses", requestData);
-            
+
             // Check if the delete was successful
             if (response) { res.json({ message: "Success" });
             } else {

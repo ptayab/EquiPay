@@ -120,6 +120,19 @@ export default (app) => {
             res.status(500).json({ message: "Failure to retrieve GROUP data", error: error });
         }
     })
+
+    route.get("/:groupId/details", async (req, res) => {
+        try {
+          const { groupId } = req.params;
+      
+          // Fetch group details including its members based on the groupId
+          const groupDetails = await Database.getGroupDetails(groupId);
+      
+          res.json(groupDetails);
+        } catch (error) {
+          res.status(500).json({ message: "Failure to retrieve group details", error });
+        }
+      });
   
 
 }
