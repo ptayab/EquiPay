@@ -1,6 +1,11 @@
 import React from 'react';
 
-const Remind = () => {
+import { useLocation } from 'react-router-dom';
+const Remind = ({ groupName }) => {
+  const location = useLocation(); 
+  const queryParams = new URLSearchParams(location.search);
+  const userEmail = queryParams.get('userEmail') || '';
+
   const containerStyles = {
     display: 'flex',
     flexDirection: 'column',
@@ -28,9 +33,9 @@ const Remind = () => {
   const descStyles = {
     fontSize: '18px',
     color: '#555',
-    fontFamily: 'Arial, sans-serif', // Change the font family
-    backgroundColor: 'silver', // Add a background color
-    padding: '10px', // Add padding to highlight
+    fontFamily: 'Arial, sans-serif', 
+    backgroundColor: 'silver', 
+    padding: '10px',
     width: "100%"
   };
 
@@ -51,23 +56,29 @@ const Remind = () => {
     border: 'none',
   };
 
-  return (
-    <div style={containerStyles}>
-      
-      <div>
-      <h1 style={headerStyles}>Reminde User</h1>
 
+    return (
+      <div style={containerStyles}>
+        <div>
+          <h1 style={headerStyles}>Remind User in {groupName}</h1>
+        </div>
+        <div style={formStyles} id="contactusform">
+          <form action="https://formsubmit.co/aroraaryan689@gmail.com" method="POST" id="contact-form">
+            <input name="name" type="text" style={inputStyles} placeholder="Name" id="inputName" required />
+            <input name="email" type="email" style={inputStyles} placeholder="Email" id="inputEmail" value={userEmail} required />
+            <input
+              name="message"
+              type="text"
+              style={inputStyles}
+              placeholder={`Please pay your dues`}
+              id="inputMessage"
+              required
+            />
+            <input type="submit" style={submitButtonStyles} value="Send" id="buttonSubmit" />
+          </form>
+        </div>
       </div>
-
-      <div style={formStyles} id="contactusform">
-        <form action="https://formsubmit.co/aroraaryan689@gmail.com" method="POST" id="contact-form">
-          
-          <input name="name" type="text" style={inputStyles} placeholder="Name" id="inputName" required />
-          <input type="submit" style={submitButtonStyles} value="Send" id="buttonSubmit" />
-        </form>
-      </div>
-    </div>
-  );
-};
+    );
+  };
 
 export default Remind;

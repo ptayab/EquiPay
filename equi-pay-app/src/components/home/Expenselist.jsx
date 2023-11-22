@@ -8,8 +8,8 @@ import {  useParams } from "react-router-dom";
 import { Alert } from "@mui/lab";
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
-
 import { useNavigate } from 'react-router-dom';
+
 function NeedToPayFees() {
     const navigate = useNavigate();
     const [feesToPay, setFeesToPay] = useState([]);
@@ -23,7 +23,6 @@ function NeedToPayFees() {
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredFees, setFilteredFees] = useState([]);
     const [errorMessage, setErrorMessage] = useState(''); // New state for error message
-   
     const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
 
@@ -160,6 +159,13 @@ function NeedToPayFees() {
         handleSearch();
     }, [feesToPay, searchQuery]);
 
+    const handleRemind = (userId) => {
+        // navigate(`/RemindUser?email=${userId.email}`)
+        navigate(`/RemindUser/${userId}`)
+        console.log(`Remind user with ID ${userId.email}`);
+    };
+    
+
     return (
         <div className="container mx-auto mt-5" style={{ maxHeight: '80vh', overflow: 'auto' }}>
             <h1 className="text-2xl font-semibold mb-4">
@@ -194,7 +200,12 @@ function NeedToPayFees() {
                     <ul className="pl-4">
                         {groupDetails.members.map((member) => (
                             <li key={member.id} style={{ listStyleType: 'none', padding: '5px 0', transition: 'background-color 0.3s', cursor: 'pointer' }}>
-                                {member.displayname}
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <IconButton onClick={() => handleRemind(member.id)}>
+                                        🔔
+                                    </IconButton>
+                                    <span style={{ marginLeft: '10px' }}>{member.displayname}</span>
+                                </div>
                             </li>
                         ))}
                     </ul>

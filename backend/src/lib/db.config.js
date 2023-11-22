@@ -52,7 +52,7 @@ const DatabaseConfig = {
         {
             name: "comments",
             sql: `
-                CREATE TABLE IF NOT EXISTS expenses (
+                CREATE TABLE IF NOT EXISTS comments (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     comment TEXT,
                     expense_id INTEGER,
@@ -63,6 +63,7 @@ const DatabaseConfig = {
                     FOREIGN KEY (group_id) REFERENCES groups(id),
                     FOREIGN KEY (expense_id) REFERENCES expenses(id)
                 );
+            
             `
         },
         {
@@ -82,25 +83,31 @@ const DatabaseConfig = {
 				{
 					name : "bbob",
 					displayname : "Builder Bob"
+                    // email : "bobthebuilder@gmail.com"
 					
 				} , {
 					name : "rrandy",
 					displayname : "Roommate Randy"
+                    // email : "roommaterandy@gmail.com"
 					
 				} , {
 					name : "dodale",
 					displayname : "Dine Out Dale"
+                    // email : "dineoutdale@gmail.com"
 					
 				} , {
 					name : "sski",
 					displayname : "Stezzy Ski"
+                    // email : "stezzyski@gmail.com"
 				} , {
 					name : "vvince",
 					displayname : "Vacation Vince"
+                    // email : "vacationvince@gmail.com"
 					
 				} , {
 					name : "ccory",
-					displayname : "College Cory"     
+					displayname : "College Cory"  
+                    // email : "collegecory@gmail.com"
 				}
 			]
 		}
