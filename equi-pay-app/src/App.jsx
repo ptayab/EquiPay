@@ -16,8 +16,7 @@ import Login from './pages/login';
 import Register from './pages/register';
 import UserProfile from './pages/UserProfile';
 import Contact from './pages/contactForm';
-
-//
+import History from './pages/history.jsx';
 import ExpenseList from './components/home/Expenselist.jsx';
 
 
@@ -38,6 +37,8 @@ function App() {
                         <Route path="/user/:userId/*"   element={<UserProfile />}>
                             <Route path="dashboard"         element={<UserProfile />} />
                         </Route>
+                        <Route path="/user/:userId/history" element={<History />} />
+
                         <Route path="/user/:userId/expenseList/group/:groupId" element={<ExpenseList />} />
                     </Routes>
                 </Router>
