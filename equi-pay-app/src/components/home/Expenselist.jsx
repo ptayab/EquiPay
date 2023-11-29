@@ -159,10 +159,9 @@ function NeedToPayFees() {
         handleSearch();
     }, [feesToPay, searchQuery]);
 
-    const handleRemind = (userId) => {
-        // navigate(`/RemindUser?email=${userId.email}`)
-        navigate(`/RemindUser/${userId}`)
-        console.log(`Remind user with ID ${userId.email}`);
+    const handleRemind = (email) => {
+
+        navigate(`RemindUser/${email}`)
     };
     
 
@@ -201,7 +200,7 @@ function NeedToPayFees() {
                         {groupDetails.members.map((member) => (
                             <li key={member.id} style={{ listStyleType: 'none', padding: '5px 0', transition: 'background-color 0.3s', cursor: 'pointer' }}>
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <IconButton onClick={() => handleRemind(member.id)}>
+                                    <IconButton onClick={() => handleRemind(member.email)}>
                                         🔔
                                     </IconButton>
                                     <span style={{ marginLeft: '10px' }}>{member.displayname}</span>

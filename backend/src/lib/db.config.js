@@ -6,7 +6,8 @@ const DatabaseConfig = {
                 CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     name TEXT,
-                    displayname TEXT
+                    displayname TEXT,
+                    email TEXT
                 );
             `
         },
@@ -15,7 +16,7 @@ const DatabaseConfig = {
             sql: `
                 CREATE TABLE IF NOT EXISTS groups (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name TEXT,
+                    name TEXT
                     
                 );
             `
@@ -82,32 +83,32 @@ const DatabaseConfig = {
 			entries: [
 				{
 					name : "bbob",
-					displayname : "Builder Bob"
-                    // email : "bobthebuilder@gmail.com"
+					displayname : "Builder Bob",
+                    email : "bob02builder02@gmail.com"
 					
 				} , {
 					name : "rrandy",
-					displayname : "Roommate Randy"
-                    // email : "roommaterandy@gmail.com"
+					displayname : "Roommate Randy",
+                    email : "roommaterandy157@gmail.com"
 					
 				} , {
 					name : "dodale",
-					displayname : "Dine Out Dale"
-                    // email : "dineoutdale@gmail.com"
+					displayname : "Dine Out Dale",
+                    email : "dinedale24@gmail.com"
 					
 				} , {
 					name : "sski",
-					displayname : "Stezzy Ski"
-                    // email : "stezzyski@gmail.com"
+					displayname : "Stezzy Ski",
+                    email : "stezzyski01@gmail.com"
 				} , {
 					name : "vvince",
-					displayname : "Vacation Vince"
-                    // email : "vacationvince@gmail.com"
+					displayname : "Vacation Vince",
+                    email : "vacationvin2143@gmail.com"
 					
 				} , {
 					name : "ccory",
-					displayname : "College Cory"  
-                    // email : "collegecory@gmail.com"
+					displayname : "College Cory",  
+                    email : "collegecory89@gmail.com"
 				}
 			]
 		}

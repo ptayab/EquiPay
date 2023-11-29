@@ -1,10 +1,9 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 
-import { useLocation } from 'react-router-dom';
+
 const Remind = ({ groupName }) => {
-  const location = useLocation(); 
-  const queryParams = new URLSearchParams(location.search);
-  const userEmail = queryParams.get('userEmail') || '';
+  const { userEmail } = useParams(); 
 
   const containerStyles = {
     display: 'flex',
@@ -57,28 +56,21 @@ const Remind = ({ groupName }) => {
   };
 
 
-    return (
-      <div style={containerStyles}>
-        <div>
-          <h1 style={headerStyles}>Remind User in {groupName}</h1>
-        </div>
-        <div style={formStyles} id="contactusform">
-          <form action="https://formsubmit.co/aroraaryan689@gmail.com" method="POST" id="contact-form">
-            <input name="name" type="text" style={inputStyles} placeholder="Name" id="inputName" required />
-            <input name="email" type="email" style={inputStyles} placeholder="Email" id="inputEmail" value={userEmail} required />
-            <input
-              name="message"
-              type="text"
-              style={inputStyles}
-              placeholder={`Please pay your dues`}
-              id="inputMessage"
-              required
-            />
-            <input type="submit" style={submitButtonStyles} value="Send" id="buttonSubmit" />
-          </form>
-        </div>
+  return (
+    <div style={containerStyles}>
+      <div>
+        <h1 style={headerStyles}>Send Reminder Email to {userEmail} </h1>
       </div>
-    );
-  };
+      <div style={formStyles} id="contactusform">
+        <form action={`https://formsubmit.co/${userEmail}`} method="POST" id="contact-form">
+          <input name="name" type="text" style={inputStyles} placeholder="Reminder from" id="inputName" required />
+          <input name="email" type="text" style={inputStyles} placeholder="Email" id="inputEmail" required />
+          <textarea name="message" style={inputStyles} placeholder="Remind Message" rows="4" id="TextArea" required />
+          <input type="submit" style={submitButtonStyles} value="Send" id="buttonSubmit" />
+        </form>
+      </div>
+    </div>
+  );
+};
 
 export default Remind;

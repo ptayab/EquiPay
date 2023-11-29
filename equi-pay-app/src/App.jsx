@@ -40,7 +40,7 @@ function App() {
                             <Route path="dashboard"         element={<UserProfile />} />
                         </Route>
                         <Route path="/user/:userId/expenseList/group/:groupId" element={<ExpenseList />} />
-                        <Route path="/RemindUser/:userId" element={<UserReminder/>} />
+                        <Route path="/user/:userId/expenseList/group/:groupId/RemindUser/:userEmail" element={<UserReminder/>} />
                     </Routes>
                 </Router>
             </UserProvider>
