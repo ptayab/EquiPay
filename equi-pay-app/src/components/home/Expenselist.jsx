@@ -24,8 +24,16 @@ function NeedToPayFees() {
     const [filteredFees, setFilteredFees] = useState([]);
     const [errorMessage, setErrorMessage] = useState(''); // New state for error message
     const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+    const [userComment, setUserComment] = useState('');
+    const [comments, setComments] = useState([]);
 
-
+    const handleAddComment = () => {
+        // Logic to add the comment to the comments array
+        setComments([...comments, userComment]);
+        // Optionally, you can also send the comment to a server or perform other actions
+        // Reset the userComment state
+        setUserComment('');
+    };
 
     const addExpense = async (newExpense) => {
         try {
@@ -167,6 +175,7 @@ function NeedToPayFees() {
 
     return (
         <div className="container mx-auto mt-5" style={{ maxHeight: '80vh', overflow: 'auto' }}>
+            {/* Expenses header */}
             <h1 className="text-2xl font-semibold mb-4">
                 <IconButton onClick={() => navigate(-1)}>
                     <ArrowBackIosIcon />
@@ -174,6 +183,8 @@ function NeedToPayFees() {
                 Expenses
                 <CreateExpense addExpense={addExpense} />
             </h1>
+    
+            {/* Search bar */}
             <div className="mb-6">
                 <TextField
                     label="Search Expense by Name or Date"
@@ -192,6 +203,8 @@ function NeedToPayFees() {
                     }}
                 />
             </div>
+    
+            {/* Group details */}
             <div className="mb-6">
                 <div style={{ backgroundColor: '#f0f0f0', padding: '20px', borderRadius: '8px', boxShadow: '0 0 5px rgba(0, 0, 0, 0.2)' }}>
                     <h2 className="text-lg font-semibold mb-2">Group Name: {groupDetails.groupName}</h2>
@@ -210,11 +223,42 @@ function NeedToPayFees() {
                     </ul>
                 </div>
             </div>
+            {/* Comments Section */}
+            <div style={{ flex: 1 }}>
+                <h2 className="text-xl font-semibold mb-2">Comments</h2>
+                <ul className="space-y-2" style={{ paddingRight: '20px' }}>
+                    {comments.map((comment, index) => (
+                        <li key={index} className="p-2 border border-gray-200 rounded-md">
+                            {comment}
+                        </li>
+                    ))}
+                </ul>
+
+                {/* Comment input */}
+                <div className="mb-6">
+                    <TextField
+                        label="Add a Comment"
+                        variant="outlined"
+                        fullWidth
+                        multiline
+                        rows={1}
+                        value={userComment}
+                        onChange={(e) => setUserComment(e.target.value)}
+                    />
+                    <Button variant="contained" color="primary" onClick={handleAddComment} style={{ marginTop: '10px' }}>
+                        Add Comment
+                    </Button>
+                </div>
+            </div>
+            {/* Expenses list */}
             <ul className="space-y-4">
+                {/* Display a warning if there are no records */}
                 {filteredFees.length === 0 && <Alert severity="warning">No Records</Alert>}
                 {filteredFees.map((fee, index) => (
                     <li key={index} className="p-4 rounded-md border border-gray-200">
+                        {/* Expense details */}
                         <div className={'flex items-center'}>
+                            {/* Left side */}
                             <div className="w-1/2">
                                 <h4
                                     onClick={() => {
@@ -230,23 +274,29 @@ function NeedToPayFees() {
                                 </h4>
                                 <p className="text-gray-600">Date: {fee.created_at}</p>
                             </div>
+    
+                            {/* Right side */}
                             <div className="w-1/2 text-right">
                                 <p className="text-lg font-semibold">${fee.balance}</p>
                                 <div className="w-1/2 text-right">
-                                   
-                                   {fee.balance >0 && ( // Check if the user is not the creator
+                                    {/* Display Settle Up button if the balance is greater than 0 */}
+                                    {fee.balance > 0 && (
                                         <Button variant="contained" onClick={() => handleOpenDialog(index)}>
                                             Settle Up
                                         </Button>
-                                        )}
+                                    )}
                                 </div>
                             </div>
                         </div>
+    
+                        {/* Display detailed expense information if opened */}
                         {openedExpense === fee.name && (
                             <div>
                                 <ExpenseDetail expense={fee} userId={userId} />
                             </div>
                         )}
+    
+                        {/* Delete button */}
                         <Button
                             variant="contained"
                             color="secondary"
@@ -257,16 +307,18 @@ function NeedToPayFees() {
                         </Button>
                     </li>
                 ))}
+
+                
+                {/* Settle Up Dialog */}
                 <Dialog onClose={handleCloseDialog} open={open} fullWidth>
                     <DialogTitle>Settle Up </DialogTitle>
                     <DialogContent>
                         <div style={{ textAlign: 'center' }}>
                             <h1>Payment Page</h1>
-                            
-
+    
                             {/* Display error message if exists */}
                             {errorMessage && (
-                            <p style={{ color: 'red', marginBottom: '10px' }}>{errorMessage}</p>
+                                <p style={{ color: 'red', marginBottom: '10px' }}>{errorMessage}</p>
                             )}
                             <TextField
                                 label="Enter the amount to pay"
@@ -279,7 +331,6 @@ function NeedToPayFees() {
                                 }}
                                 value={paymentAmount}
                                 onChange={(e) => setPaymentAmount(parseFloat(e.target.value))}
-                          
                             />
                             <Button variant="contained" color="primary" onClick={() => settleUp(selectedExpenseIndex)} style={{ marginTop: '10px' }}>
                                 Pay
@@ -287,26 +338,29 @@ function NeedToPayFees() {
                         </div>
                     </DialogContent>
                 </Dialog>
-
+    
                 {/* Success Dialog */}
                 <Dialog onClose={() => setShowSuccessDialog(false)} open={showSuccessDialog} fullWidth>
                     <DialogTitle>Payment Successful</DialogTitle>
                     <DialogContent>
-                    <div style={{ textAlign: 'center' }}>
-                        <p>Your payment was successful!</p>
-                        <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => setShowSuccessDialog(false)}
-                        style={{ marginTop: '10px' }}
-                        >
-                        OK
-                        </Button>
-                    </div>
+                        <div style={{ textAlign: 'center' }}>
+                            <p>Your payment was successful!</p>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={() => setShowSuccessDialog(false)}
+                                style={{ marginTop: '10px' }}
+                            >
+                                OK
+                            </Button>
+                        </div>
                     </DialogContent>
                 </Dialog>
+                
             </ul>
         </div>
+        
+        
     );
 }
 
