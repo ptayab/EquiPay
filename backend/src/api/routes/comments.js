@@ -19,9 +19,9 @@ export default (app) => {
                     "id":id
                 } : { 
                     "group_id": group_id ? group_id : "*",
-                    ...(user_id ? { "users.id": user_id } : {}),
+                    "user_id": user_id  ?  user_id  : "*",
                 },
-                (!id && user_id) ? [ { table: 'users', on: 'comments.user_id = users.id' } ] : [] 
+                [ { table: 'users', on: 'comments.user_id = users.id' } ] 
             ))
                 
         } catch (error) {
