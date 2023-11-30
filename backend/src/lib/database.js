@@ -298,14 +298,18 @@ class DatabaseClass {
         try {
             const db = new sqlite(dbPath);
             db.exec('PRAGMA foreign_keys = ON;', (err) => { if (err) console.error('Error enabling foreign key support:', err)});
-            for (const table of DBConfig.tables) db.exec(table.sql);
-            this.report(db)
+            for (const table of DBConfig.tables) {
+                console.log('Executing SQL:', table.sql);
+                db.exec(table.sql);
+            }
+            this.report(db);
             return db;
         } catch (err) {
-            console.log(`createTablesFromConfig: Unable to initialize tables ${JSON.stringify()}`);
+            console.log(`createTablesFromConfig: Unable to initialize tables ${JSON.stringify(DBConfig.tables)}`);
             console.error(err);
         }
     }
+    
     
     /**
      * Initializes all the data from the config gile
