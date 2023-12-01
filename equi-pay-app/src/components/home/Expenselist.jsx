@@ -26,6 +26,11 @@ function NeedToPayFees() {
     const [showSuccessDialog, setShowSuccessDialog] = useState(false);
     const [userComment, setUserComment] = useState('');
     const [comments, setComments] = useState([]);
+    const [reloadComments, setReloadComments] = useState(true);
+
+    const onNewComment = (newComment) => {
+        setReloadComments(prev => !prev);
+    };
 
     const handleAddComment = async () => {
         try {
@@ -36,15 +41,18 @@ function NeedToPayFees() {
                 user_id: Number(userId),
                 group_id: Number(groupId),
             });
-    
+
             // Update the local state using the functional form of setComments
             setComments(prevComments => [
                 ...prevComments,
                 { text: userComment, user: "Current User", time: new Date().toLocaleString() }
             ]);
-    
+
             // Reset the userComment state
             setUserComment('');
+
+            // Trigger a reload of comments
+            onNewComment();
         } catch (error) {
             console.error('Error adding comment:', error.response ? error.response.data : error.message);
             // Handle error, show error message, etc.
@@ -189,9 +197,10 @@ function NeedToPayFees() {
 
         navigate(`RemindUser/${email}`)
     };
-    
+
+
     useEffect(() => {
-        // Fetch comments for the group when the component mounts
+        // Fetch comments for the group when the component mounts or when reloadComments changes
         authedRequest.get(`/api/comments?group_id=${groupId}`)
             .then(res => {
                 if (res && res.data) {
@@ -202,7 +211,7 @@ function NeedToPayFees() {
             .catch(err => {
                 console.log('Error fetching comments:', err);
             });
-    }, [groupId]);
+    }, [groupId, reloadComments]);
 
     return (
         <div className="container mx-auto mt-5" style={{ maxHeight: '80vh', overflow: 'auto' }}>
