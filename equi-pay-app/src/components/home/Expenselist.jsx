@@ -9,6 +9,8 @@ import { Alert } from "@mui/lab";
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate } from 'react-router-dom';
+import AddIcon from "@mui/icons-material/Add";
+import AddMember from "./AddMember";
 
 function NeedToPayFees() {
     const navigate = useNavigate();
@@ -27,6 +29,7 @@ function NeedToPayFees() {
     const [userComment, setUserComment] = useState('');
     const [comments, setComments] = useState([]);
     const [reloadComments, setReloadComments] = useState(true);
+    const [reload, setReload] = useState(true);
 
     const onNewComment = (newComment) => {
         setReloadComments(prev => !prev);
@@ -187,7 +190,7 @@ function NeedToPayFees() {
             .catch(err => {
                 console.error('Error fetching group details:', err);
             });
-    }, [groupId]);
+    }, [groupId,reload]);
 
     useEffect(() => {
         handleSearch();
@@ -248,7 +251,13 @@ function NeedToPayFees() {
             <div className="mb-6">
                 <div style={{ backgroundColor: '#f0f0f0', padding: '20px', borderRadius: '8px', boxShadow: '0 0 5px rgba(0, 0, 0, 0.2)' }}>
                     <h2 className="text-lg font-semibold mb-2">Group Name: {groupDetails.groupName}</h2>
-                    <h3 className="text-md font-semibold mb-1">Group Members:</h3>
+                    <h3 className="text-md font-semibold mb-1 flex items-center">Group Members:
+                        <AddMember
+                            onAdded={() => {
+                                setReload(!reload)
+                            }}
+                            members={groupDetails.members || []} />
+                    </h3>
                     <ul className="pl-4">
                         {groupDetails.members.map((member) => (
                             <li key={member.id} style={{ listStyleType: 'none', padding: '5px 0', transition: 'background-color 0.3s', cursor: 'pointer' }}>
