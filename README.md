@@ -22,6 +22,7 @@ npm start
 
 Frontend:
 ```
+*open a second terminal
 cd existing_repo
 cd ./equi-pay-app
 npm install
