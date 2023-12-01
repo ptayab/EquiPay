@@ -8,10 +8,8 @@ import {  useParams } from "react-router-dom";
 import { Alert } from "@mui/lab";
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
-
 import { useNavigate } from 'react-router-dom';
-import AddIcon from "@mui/icons-material/Add";
-import AddMember from "./AddMember";
+
 function NeedToPayFees() {
     const navigate = useNavigate();
     const [feesToPay, setFeesToPay] = useState([]);
@@ -25,10 +23,35 @@ function NeedToPayFees() {
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredFees, setFilteredFees] = useState([]);
     const [errorMessage, setErrorMessage] = useState(''); // New state for error message
-   
     const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+    const [userComment, setUserComment] = useState('');
+    const [comments, setComments] = useState([]);
 
-    const [reload, setReload] = useState(true);
+    const handleAddComment = async () => {
+        try {
+            console.log('Adding comment:', userComment);
+            // Send the comment to the server
+            await authedRequest.post(`/api/comments`, {
+                comment: userComment,
+                user_id: Number(userId),
+                group_id: Number(groupId),
+            });
+    
+            // Update the local state using the functional form of setComments
+            setComments(prevComments => [
+                ...prevComments,
+                { text: userComment, user: "Current User", time: new Date().toLocaleString() }
+            ]);
+    
+            // Reset the userComment state
+            setUserComment('');
+        } catch (error) {
+            console.error('Error adding comment:', error.response ? error.response.data : error.message);
+            // Handle error, show error message, etc.
+        }
+    };
+    
+    
 
     const addExpense = async (newExpense) => {
         try {
@@ -156,14 +179,34 @@ function NeedToPayFees() {
             .catch(err => {
                 console.error('Error fetching group details:', err);
             });
-    }, [groupId, reload]);
+    }, [groupId]);
 
     useEffect(() => {
         handleSearch();
     }, [feesToPay, searchQuery]);
 
+    const handleRemind = (email) => {
+
+        navigate(`RemindUser/${email}`)
+    };
+    
+    useEffect(() => {
+        // Fetch comments for the group when the component mounts
+        authedRequest.get(`/api/comments?group_id=${groupId}`)
+            .then(res => {
+                if (res && res.data) {
+                    console.log('Comments data:', res.data);
+                    setComments(res.data);
+                }
+            })
+            .catch(err => {
+                console.log('Error fetching comments:', err);
+            });
+    }, [groupId]);
+
     return (
         <div className="container mx-auto mt-5" style={{ maxHeight: '80vh', overflow: 'auto' }}>
+            {/* Expenses header */}
             <h1 className="text-2xl font-semibold mb-4">
                 <IconButton onClick={() => navigate(-1)}>
                     <ArrowBackIosIcon />
@@ -171,6 +214,8 @@ function NeedToPayFees() {
                 Expenses
                 <CreateExpense addExpense={addExpense} />
             </h1>
+    
+            {/* Search bar */}
             <div className="mb-6">
                 <TextField
                     label="Search Expense by Name or Date"
@@ -189,30 +234,66 @@ function NeedToPayFees() {
                     }}
                 />
             </div>
+    
+            {/* Group details */}
             <div className="mb-6">
                 <div style={{ backgroundColor: '#f0f0f0', padding: '20px', borderRadius: '8px', boxShadow: '0 0 5px rgba(0, 0, 0, 0.2)' }}>
                     <h2 className="text-lg font-semibold mb-2">Group Name: {groupDetails.groupName}</h2>
-                    <h3 className="text-md font-semibold mb-1 flex items-center">Group Members:
-                        <AddMember
-                            onAdded={() => {
-                                setReload(!reload)
-                            }}
-                            members={groupDetails.members || []} />
-                    </h3>
+                    <h3 className="text-md font-semibold mb-1">Group Members:</h3>
                     <ul className="pl-4">
                         {groupDetails.members.map((member) => (
                             <li key={member.id} style={{ listStyleType: 'none', padding: '5px 0', transition: 'background-color 0.3s', cursor: 'pointer' }}>
-                                {member.displayname}
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <IconButton onClick={() => handleRemind(member.email)}>
+                                        🔔
+                                    </IconButton>
+                                    <span style={{ marginLeft: '10px' }}>{member.displayname}</span>
+                                </div>
                             </li>
                         ))}
                     </ul>
                 </div>
             </div>
+     {/* Comments Section */}
+    <div style={{ flex: 1 }}>
+        <h2 className="text-xl font-semibold mb-2">Comments</h2>
+        {/* Display comments */}
+        <ul className="space-y-2" style={{ paddingRight: '20px' }}>
+            {comments.map((comment, index) => (
+                <li key={index} className="p-2 border border-gray-200 rounded-md">
+                    <div>
+                        <strong>{comment.displayname}:</strong> {comment.comment}
+                    </div>
+                    <div className="text-gray-500">{comment.created_at}</div>
+                </li>
+            ))}
+        </ul>
+
+        {/* Comment input */}
+        <div className="mb-6">
+            <TextField
+                label="Add a Comment"
+                variant="outlined"
+                fullWidth
+                multiline
+                rows={1}
+                value={userComment}
+                onChange={(e) => setUserComment(e.target.value)}
+            />
+            <Button variant="contained" color="primary" onClick={handleAddComment} style={{ marginTop: '10px' }}>
+                Add Comment
+            </Button>
+        </div>
+    </div>
+            {/* Expenses list */}
             <ul className="space-y-4">
+                {/* Display a warning if there are no records */}
                 {filteredFees.length === 0 && <Alert severity="warning">No Records</Alert>}
                 {filteredFees.map((fee, index) => (
                     <li key={index} className="p-4 rounded-md border border-gray-200">
+                        {/* Expense details */}
                         <div className={'flex items-center'}>
+                            {/* Left side */}
                             <div className="w-1/2">
                                 <h4
                                     onClick={() => {
@@ -228,23 +309,29 @@ function NeedToPayFees() {
                                 </h4>
                                 <p className="text-gray-600">Date: {fee.created_at}</p>
                             </div>
+    
+                            {/* Right side */}
                             <div className="w-1/2 text-right">
                                 <p className="text-lg font-semibold">${fee.balance}</p>
                                 <div className="w-1/2 text-right">
-                                   
-                                   {fee.balance >0 && ( // Check if the user is not the creator
+                                    {/* Display Settle Up button if the balance is greater than 0 */}
+                                    {fee.balance > 0 && (
                                         <Button variant="contained" onClick={() => handleOpenDialog(index)}>
                                             Settle Up
                                         </Button>
-                                        )}
+                                    )}
                                 </div>
                             </div>
                         </div>
+    
+                        {/* Display detailed expense information if opened */}
                         {openedExpense === fee.name && (
                             <div>
                                 <ExpenseDetail expense={fee} userId={userId} />
                             </div>
                         )}
+    
+                        {/* Delete button */}
                         <Button
                             variant="contained"
                             color="secondary"
@@ -255,16 +342,18 @@ function NeedToPayFees() {
                         </Button>
                     </li>
                 ))}
+
+                
+                {/* Settle Up Dialog */}
                 <Dialog onClose={handleCloseDialog} open={open} fullWidth>
                     <DialogTitle>Settle Up </DialogTitle>
                     <DialogContent>
                         <div style={{ textAlign: 'center' }}>
                             <h1>Payment Page</h1>
-                            
-
+    
                             {/* Display error message if exists */}
                             {errorMessage && (
-                            <p style={{ color: 'red', marginBottom: '10px' }}>{errorMessage}</p>
+                                <p style={{ color: 'red', marginBottom: '10px' }}>{errorMessage}</p>
                             )}
                             <TextField
                                 label="Enter the amount to pay"
@@ -277,7 +366,6 @@ function NeedToPayFees() {
                                 }}
                                 value={paymentAmount}
                                 onChange={(e) => setPaymentAmount(parseFloat(e.target.value))}
-                          
                             />
                             <Button variant="contained" color="primary" onClick={() => settleUp(selectedExpenseIndex)} style={{ marginTop: '10px' }}>
                                 Pay
@@ -285,26 +373,29 @@ function NeedToPayFees() {
                         </div>
                     </DialogContent>
                 </Dialog>
-
+    
                 {/* Success Dialog */}
                 <Dialog onClose={() => setShowSuccessDialog(false)} open={showSuccessDialog} fullWidth>
                     <DialogTitle>Payment Successful</DialogTitle>
                     <DialogContent>
-                    <div style={{ textAlign: 'center' }}>
-                        <p>Your payment was successful!</p>
-                        <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => setShowSuccessDialog(false)}
-                        style={{ marginTop: '10px' }}
-                        >
-                        OK
-                        </Button>
-                    </div>
+                        <div style={{ textAlign: 'center' }}>
+                            <p>Your payment was successful!</p>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={() => setShowSuccessDialog(false)}
+                                style={{ marginTop: '10px' }}
+                            >
+                                OK
+                            </Button>
+                        </div>
                     </DialogContent>
                 </Dialog>
+                
             </ul>
         </div>
+        
+        
     );
 }
 

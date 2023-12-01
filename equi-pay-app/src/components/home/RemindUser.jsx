@@ -1,6 +1,10 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 
-const Remind = () => {
+
+const Remind = ({ groupName }) => {
+  const { userEmail } = useParams(); 
+
   const containerStyles = {
     display: 'flex',
     flexDirection: 'column',
@@ -28,9 +32,9 @@ const Remind = () => {
   const descStyles = {
     fontSize: '18px',
     color: '#555',
-    fontFamily: 'Arial, sans-serif', // Change the font family
-    backgroundColor: 'silver', // Add a background color
-    padding: '10px', // Add padding to highlight
+    fontFamily: 'Arial, sans-serif', 
+    backgroundColor: 'silver', 
+    padding: '10px',
     width: "100%"
   };
 
@@ -51,18 +55,17 @@ const Remind = () => {
     border: 'none',
   };
 
+
   return (
     <div style={containerStyles}>
-      
       <div>
-      <h1 style={headerStyles}>Reminde User</h1>
-
+        <h1 style={headerStyles}>Send Reminder Email to {userEmail} </h1>
       </div>
-
       <div style={formStyles} id="contactusform">
-        <form action="https://formsubmit.co/aroraaryan689@gmail.com" method="POST" id="contact-form">
-          
-          <input name="name" type="text" style={inputStyles} placeholder="Name" id="inputName" required />
+        <form action={`https://formsubmit.co/${userEmail}`} method="POST" id="contact-form">
+          <input name="name" type="text" style={inputStyles} placeholder="Reminder from" id="inputName" required />
+          <input name="email" type="text" style={inputStyles} placeholder="Email" id="inputEmail" required />
+          <textarea name="message" style={inputStyles} placeholder="Remind Message" rows="4" id="TextArea" required />
           <input type="submit" style={submitButtonStyles} value="Send" id="buttonSubmit" />
         </form>
       </div>
