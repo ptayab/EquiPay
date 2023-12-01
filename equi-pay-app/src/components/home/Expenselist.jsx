@@ -27,13 +27,31 @@ function NeedToPayFees() {
     const [userComment, setUserComment] = useState('');
     const [comments, setComments] = useState([]);
 
-    const handleAddComment = () => {
-        // Logic to add the comment to the comments array
-        setComments([...comments, userComment]);
-        // Optionally, you can also send the comment to a server or perform other actions
-        // Reset the userComment state
-        setUserComment('');
+    const handleAddComment = async () => {
+        try {
+            console.log('Adding comment:', userComment);
+            // Send the comment to the server
+            await authedRequest.post(`/api/comments`, {
+                comment: userComment,
+                user_id: Number(userId),
+                group_id: Number(groupId),
+            });
+    
+            // Update the local state using the functional form of setComments
+            setComments(prevComments => [
+                ...prevComments,
+                { text: userComment, user: "Current User", time: new Date().toLocaleString() }
+            ]);
+    
+            // Reset the userComment state
+            setUserComment('');
+        } catch (error) {
+            console.error('Error adding comment:', error.response ? error.response.data : error.message);
+            // Handle error, show error message, etc.
+        }
     };
+    
+    
 
     const addExpense = async (newExpense) => {
         try {
@@ -172,6 +190,19 @@ function NeedToPayFees() {
         navigate(`RemindUser/${email}`)
     };
     
+    useEffect(() => {
+        // Fetch comments for the group when the component mounts
+        authedRequest.get(`/api/comments?group_id=${groupId}`)
+            .then(res => {
+                if (res && res.data) {
+                    console.log('Comments data:', res.data);
+                    setComments(res.data);
+                }
+            })
+            .catch(err => {
+                console.log('Error fetching comments:', err);
+            });
+    }, [groupId]);
 
     return (
         <div className="container mx-auto mt-5" style={{ maxHeight: '80vh', overflow: 'auto' }}>
@@ -223,33 +254,37 @@ function NeedToPayFees() {
                     </ul>
                 </div>
             </div>
-            {/* Comments Section */}
-            <div style={{ flex: 1 }}>
-                <h2 className="text-xl font-semibold mb-2">Comments</h2>
-                <ul className="space-y-2" style={{ paddingRight: '20px' }}>
-                    {comments.map((comment, index) => (
-                        <li key={index} className="p-2 border border-gray-200 rounded-md">
-                            {comment}
-                        </li>
-                    ))}
-                </ul>
+     {/* Comments Section */}
+    <div style={{ flex: 1 }}>
+        <h2 className="text-xl font-semibold mb-2">Comments</h2>
+        {/* Display comments */}
+        <ul className="space-y-2" style={{ paddingRight: '20px' }}>
+            {comments.map((comment, index) => (
+                <li key={index} className="p-2 border border-gray-200 rounded-md">
+                    <div>
+                        <strong>{comment.displayname}:</strong> {comment.comment}
+                    </div>
+                    <div className="text-gray-500">{comment.created_at}</div>
+                </li>
+            ))}
+        </ul>
 
-                {/* Comment input */}
-                <div className="mb-6">
-                    <TextField
-                        label="Add a Comment"
-                        variant="outlined"
-                        fullWidth
-                        multiline
-                        rows={1}
-                        value={userComment}
-                        onChange={(e) => setUserComment(e.target.value)}
-                    />
-                    <Button variant="contained" color="primary" onClick={handleAddComment} style={{ marginTop: '10px' }}>
-                        Add Comment
-                    </Button>
-                </div>
-            </div>
+        {/* Comment input */}
+        <div className="mb-6">
+            <TextField
+                label="Add a Comment"
+                variant="outlined"
+                fullWidth
+                multiline
+                rows={1}
+                value={userComment}
+                onChange={(e) => setUserComment(e.target.value)}
+            />
+            <Button variant="contained" color="primary" onClick={handleAddComment} style={{ marginTop: '10px' }}>
+                Add Comment
+            </Button>
+        </div>
+    </div>
             {/* Expenses list */}
             <ul className="space-y-4">
                 {/* Display a warning if there are no records */}
