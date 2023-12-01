@@ -6,7 +6,8 @@ const DatabaseConfig = {
                 CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     name TEXT,
-                    displayname TEXT
+                    displayname TEXT,
+                    email TEXT
                 );
             `
         },
@@ -15,7 +16,7 @@ const DatabaseConfig = {
             sql: `
                 CREATE TABLE IF NOT EXISTS groups (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name TEXT,
+                    name TEXT
                     
                 );
             `
@@ -52,7 +53,7 @@ const DatabaseConfig = {
         {
             name: "comments",
             sql: `
-                CREATE TABLE IF NOT EXISTS expenses (
+                CREATE TABLE IF NOT EXISTS comments (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     comment TEXT,
                     expense_id INTEGER,
@@ -63,6 +64,7 @@ const DatabaseConfig = {
                     FOREIGN KEY (group_id) REFERENCES groups(id),
                     FOREIGN KEY (expense_id) REFERENCES expenses(id)
                 );
+            
             `
         },
         {
@@ -81,26 +83,32 @@ const DatabaseConfig = {
 			entries: [
 				{
 					name : "bbob",
-					displayname : "Builder Bob"
+					displayname : "Builder Bob",
+                    email : "bob02builder02@gmail.com"
 					
 				} , {
 					name : "rrandy",
-					displayname : "Roommate Randy"
+					displayname : "Roommate Randy",
+                    email : "roommaterandy157@gmail.com"
 					
 				} , {
 					name : "dodale",
-					displayname : "Dine Out Dale"
+					displayname : "Dine Out Dale",
+                    email : "dinedale24@gmail.com"
 					
 				} , {
 					name : "sski",
-					displayname : "Stezzy Ski"
+					displayname : "Stezzy Ski",
+                    email : "stezzyski01@gmail.com"
 				} , {
 					name : "vvince",
-					displayname : "Vacation Vince"
+					displayname : "Vacation Vince",
+                    email : "vacationvin2143@gmail.com"
 					
 				} , {
 					name : "ccory",
-					displayname : "College Cory"     
+					displayname : "College Cory",  
+                    email : "collegecory89@gmail.com"
 				}
 			]
 		}
