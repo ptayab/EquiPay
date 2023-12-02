@@ -68,7 +68,7 @@ const Contact = () => {
       </div>
 
       <div style={formStyles} id="contactusform">
-        <form action="https://formsubmit.co/aroraaryan689@gmail.com" method="POST" id="contact-form">
+        <form action="https://formsubmit.co/stevenruan8427@gmail.com" method="POST" id="contact-form">
           
           <input name="name" type="text" style={inputStyles} placeholder="Name" id="inputName" required />
           <input name="email" type="text" style={inputStyles} placeholder="Email" id="inputEmail" required />
